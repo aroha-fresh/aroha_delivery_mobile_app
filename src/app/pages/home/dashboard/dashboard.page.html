@@ -45,8 +45,8 @@
           </article>
         </div>
 
-        <ion-button class="summary-card__cta" expand="block">
-          Start Deliveries
+        <ion-button class="summary-card__cta" expand="block" routerLink="/deliveries">
+          View Today's Deliveries
           <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
         </ion-button>
       </section>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="actions-grid">
-          <button class="action-card" type="button" *ngFor="let action of quickActions">
+          <button class="action-card" type="button" *ngFor="let action of quickActions" [routerLink]="action.route">
             <ion-icon [name]="action.icon" aria-hidden="true"></ion-icon>
             <span>{{ action.label }}</span>
           </button>
@@ -105,6 +105,11 @@
             </li>
           </ul>
         </div>
+
+        <ion-button class="summary-card__cta" expand="block" fill="outline" routerLink="/deliveries/map">
+          Route Map
+          <ion-icon slot="end" name="map-outline"></ion-icon>
+        </ion-button>
       </section>
     </main>
   </div>

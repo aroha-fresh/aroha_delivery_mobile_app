@@ -1,13 +1,108 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>delivery-map</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">delivery-map</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="delivery-map-page">
+    <main class="delivery-map-shell">
+      <section class="map-header" aria-label="Route map header">
+        <button class="map-header__back" type="button" routerLink="/dashboard" aria-label="Back to dashboard">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+
+        <div class="map-header__copy">
+          <p class="map-header__eyebrow">Morning Route • {{ totalStops }} Stops</p>
+          <h1>Today's Route</h1>
+        </div>
+
+        <div class="map-header__switch">
+          <button type="button" class="map-header__mode" routerLink="/deliveries">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </button>
+          <button type="button" class="map-header__mode map-header__mode--active" aria-label="Map view active">
+            <ion-icon name="map-outline"></ion-icon>
+          </button>
+        </div>
+      </section>
+
+      <section class="map-stage" aria-label="Mock route map">
+        <div class="map-stage__topbar">
+          <div class="map-chip">
+            <ion-icon name="navigate-outline"></ion-icon>
+            <span>{{ routeDistance }}</span>
+          </div>
+          <div class="map-chip">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ routeEta }}</span>
+          </div>
+        </div>
+
+        <div class="map-canvas">
+          <div class="map-canvas__route"></div>
+
+          <button
+            *ngFor="let stop of stops"
+            type="button"
+            class="map-pin"
+            [class.map-pin--active]="stop.id === activeStopId"
+            [class.map-pin--done]="stop.status === 'delivered'"
+            [class]="stop.pinClass"
+            (click)="openStop(stop.id)"
+            [attr.aria-label]="'Open stop ' + stop.name"
+          >
+            <span>{{ stop.id }}</span>
+          </button>
+        </div>
+
+        <button class="map-stage__locate" type="button" aria-label="Locate current route position">
+          <ion-icon name="locate-outline"></ion-icon>
+        </button>
+      </section>
+
+      <section class="map-sheet">
+        <app-section-header
+          title="Active Stop"
+          subtitle="Tap a stop to open delivery execution."
+          [meta]="activeStop.eta"
+        ></app-section-header>
+
+        <article class="active-stop-card" (click)="openStop(activeStop.id)">
+          <div class="active-stop-card__top">
+            <div>
+              <h2>{{ activeStop.name }}</h2>
+              <p>{{ activeStop.area }}</p>
+            </div>
+            <app-status-chip [kind]="'status'" [value]="activeStop.status"></app-status-chip>
+          </div>
+
+          <div class="active-stop-card__meta">
+            <div>
+              <span>Next action</span>
+              <strong>Open stop details</strong>
+            </div>
+            <ion-button class="active-stop-card__cta" fill="solid" (click)="openStop(activeStop.id); $event.stopPropagation()">
+              Open Stop
+            </ion-button>
+          </div>
+        </article>
+
+        <div class="stop-strip">
+          <button
+            *ngFor="let stop of stops"
+            type="button"
+            class="stop-pill"
+            [class.stop-pill--active]="stop.id === activeStopId"
+            (click)="openStop(stop.id)"
+          >
+            <span>#{{ stop.id }}</span>
+            <strong>{{ stop.name }}</strong>
+          </button>
+        </div>
+
+        <div class="map-sheet__actions">
+          <ion-button fill="outline" routerLink="/deliveries">Back to List</ion-button>
+          <ion-button fill="solid" (click)="openStop(activeStop.id)">
+            Start Navigation
+            <ion-icon slot="end" name="location-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </section>
+    </main>
+  </div>
 </ion-content>

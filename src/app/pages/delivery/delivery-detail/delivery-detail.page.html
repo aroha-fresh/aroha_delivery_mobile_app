@@ -2,7 +2,7 @@
   <div class="delivery-detail-page">
     <main class="delivery-detail-shell">
       <section class="detail-header" aria-label="Navigation header">
-        <button class="detail-header__back" type="button" aria-label="Go back">
+        <button class="detail-header__back" type="button" aria-label="Go back" routerLink="/deliveries">
           <ion-icon name="arrow-back-outline"></ion-icon>
         </button>
 
@@ -104,9 +104,9 @@
   </div>
 
   <div class="detail-action-bar__actions">
-    <button class="detail-action-bar__secondary" type="button">Failed</button>
-    <button class="detail-action-bar__secondary" type="button">Skipped</button>
-    <ion-button class="detail-action-bar__primary" fill="solid">
+    <button class="detail-action-bar__secondary" type="button" (click)="goToComplete()">Failed</button>
+    <button class="detail-action-bar__secondary" type="button" (click)="goToComplete()">Skipped</button>
+    <ion-button class="detail-action-bar__primary" fill="solid" (click)="goToComplete()">
       <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
       Mark Delivered
     </ion-button>

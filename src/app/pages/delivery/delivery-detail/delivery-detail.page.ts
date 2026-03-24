@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -27,6 +28,7 @@ import { DeliveryStatus, ScheduleType, StatusChipComponent } from 'src/app/compo
     IonContent,
     IonIcon,
     CommonModule,
+    RouterLink,
     CustomerInfoCardComponent,
     ProductListComponent,
     SectionHeaderComponent,
@@ -34,6 +36,7 @@ import { DeliveryStatus, ScheduleType, StatusChipComponent } from 'src/app/compo
   ]
 })
 export class DeliveryDetailPage {
+  readonly stopId: number;
   readonly customerName = 'Green Meadows Residency';
   readonly customerCode = 'C-184';
   readonly address = '12 Palm Grove Main Road, Anna Nagar West';
@@ -61,7 +64,11 @@ export class DeliveryDetailPage {
     { name: 'Curd Tub', quantity: '2' }
   ];
 
-  constructor() {
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {
+    this.stopId = Number(this.route.snapshot.paramMap.get('id') ?? '1');
     addIcons({
       alertCircleOutline,
       arrowBackOutline,
@@ -80,5 +87,9 @@ export class DeliveryDetailPage {
 
   get extraSummary(): string {
     return this.extraItems.length ? `${this.extraItems.length} extra item${this.extraItems.length > 1 ? 's' : ''}` : 'No extras';
+  }
+
+  goToComplete(): void {
+    void this.router.navigate(['/delivery', this.stopId, 'complete']);
   }
 }

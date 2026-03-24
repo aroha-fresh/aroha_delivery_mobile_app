@@ -8,7 +8,10 @@
           <p class="delivery-list-header__subtitle">{{ pendingCount }} Pending • {{ inProgressCount }} In Progress</p>
         </div>
 
-        <ion-button class="delivery-list-header__map" fill="solid" aria-label="Open route map">
+        <ion-button class="delivery-list-header__map" fill="solid" aria-label="Back to dashboard" routerLink="/dashboard">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </ion-button>
+        <ion-button class="delivery-list-header__map" fill="solid" aria-label="Open route map" routerLink="/deliveries/map">
           <ion-icon name="location-outline"></ion-icon>
         </ion-button>
       </section>
@@ -87,6 +90,8 @@
             [milkItems]="nextStop.milkItems"
             [extraItems]="nextStop.extraItems"
             [actionText]="nextStop.status === 'in-progress' ? 'Mark Delivered' : 'Start Stop'"
+            (cardPressed)="openDelivery(nextStop.id)"
+            (actionPressed)="openDelivery(nextStop.id)"
           ></app-delivery-card>
         </section>
 
@@ -113,6 +118,8 @@
               [milkItems]="stop.milkItems"
               [extraItems]="stop.extraItems"
               [actionText]="stop.status === 'in-progress' ? 'Mark Delivered' : 'Open Stop'"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
             ></app-delivery-card>
           </div>
         </section>
@@ -140,6 +147,8 @@
               [milkItems]="stop.milkItems"
               [extraItems]="stop.extraItems"
               actionText="View Stop"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
             ></app-delivery-card>
           </div>
         </section>

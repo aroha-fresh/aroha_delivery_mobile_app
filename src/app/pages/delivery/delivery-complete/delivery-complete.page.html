@@ -2,7 +2,7 @@
   <div class="delivery-complete-page">
     <main class="delivery-complete-shell">
       <section class="complete-header" aria-label="Completion header">
-        <button class="complete-header__back" type="button" aria-label="Go back">
+        <button class="complete-header__back" type="button" aria-label="Go back" (click)="cancel()">
           <ion-icon name="arrow-back-outline"></ion-icon>
         </button>
 
@@ -184,8 +184,8 @@
 </ion-content>
 
 <div class="completion-bar">
-  <button class="completion-bar__ghost" type="button">Cancel</button>
-  <ion-button class="completion-bar__primary" fill="solid">
+  <button class="completion-bar__ghost" type="button" (click)="cancel()">Cancel</button>
+  <ion-button class="completion-bar__primary" fill="solid" (click)="confirm()">
     <ion-icon slot="start" [name]="selectedAction === 'delivered' ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
     {{ finalCtaLabel }}
   </ion-button>

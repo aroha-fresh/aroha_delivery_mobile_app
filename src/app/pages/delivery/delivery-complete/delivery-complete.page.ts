@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -48,6 +49,7 @@ interface ProofOption {
   ]
 })
 export class DeliveryCompletePage {
+  readonly stopId: number;
   selectedAction: CompletionAction = 'delivered';
   otpCode = '';
   deliveryNote = '';
@@ -88,7 +90,11 @@ export class DeliveryCompletePage {
     { key: 'note', label: 'Note', helper: 'Add delivery remark', icon: 'chatbubble-ellipses-outline' }
   ];
 
-  constructor() {
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {
+    this.stopId = Number(this.route.snapshot.paramMap.get('id') ?? '1');
     addIcons({
       alertCircleOutline,
       arrowBackOutline,
@@ -160,5 +166,13 @@ export class DeliveryCompletePage {
       signature: false,
       note: false
     };
+  }
+
+  cancel(): void {
+    void this.router.navigate(['/delivery', this.stopId]);
+  }
+
+  confirm(): void {
+    void this.router.navigate(['/deliveries']);
   }
 }

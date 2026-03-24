@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -21,7 +22,7 @@ import {
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [IonButton, IonContent, IonIcon, CommonModule]
+  imports: [IonButton, IonContent, IonIcon, CommonModule, RouterLink]
 })
 export class DashboardPage {
   readonly agentName = 'Arjun';
@@ -50,10 +51,10 @@ export class DashboardPage {
   ];
 
   readonly quickActions = [
-    { label: 'List View', icon: 'calendar-outline' },
-    { label: 'Map View', icon: 'map-outline' },
-    { label: 'Completed', icon: 'checkmark-circle-outline' },
-    { label: 'Day Summary', icon: 'stats-chart-outline' }
+    { label: 'List View', icon: 'calendar-outline', route: '/deliveries' },
+    { label: 'Map View', icon: 'map-outline', route: '/deliveries/map' },
+    { label: 'Completed', icon: 'checkmark-circle-outline', route: '/deliveries' },
+    { label: 'Day Summary', icon: 'stats-chart-outline', route: '/day-summary' }
   ];
 
   constructor() {

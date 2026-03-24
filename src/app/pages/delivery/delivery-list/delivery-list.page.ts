@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeCircleOutline, funnelOutline, locationOutline, searchOutline } from 'ionicons/icons';
+import { arrowBackOutline, closeCircleOutline, funnelOutline, locationOutline, searchOutline } from 'ionicons/icons';
 import { DeliveryCardComponent } from 'src/app/components/delivery-card/delivery-card.component';
 import { EmptyStateComponent } from 'src/app/components/empty-state/empty-state.component';
 import { SectionHeaderComponent } from 'src/app/components/section-header/section-header.component';
@@ -13,6 +14,7 @@ import { DeliveryStatus, ScheduleType } from 'src/app/components/status-chip/sta
 type FilterKey = 'all' | 'pending' | 'delivered' | 'alternate-day' | 'with-extras';
 
 interface DeliveryStop {
+  id: number;
   customerName: string;
   customerCode: string;
   address: string;
@@ -39,6 +41,7 @@ interface DeliveryStop {
     IonIcon,
     CommonModule,
     FormsModule,
+    RouterLink,
     DeliveryCardComponent,
     EmptyStateComponent,
     SectionHeaderComponent
@@ -60,6 +63,7 @@ export class DeliveryListPage {
 
   readonly deliveries: DeliveryStop[] = [
     {
+      id: 1,
       customerName: 'Green Meadows Residency',
       customerCode: 'C-184',
       address: '12 Palm Grove Main Road, Anna Nagar West',
@@ -75,6 +79,7 @@ export class DeliveryListPage {
       extraItems: [{ name: 'Curd Tub', quantity: '2' }]
     },
     {
+      id: 2,
       customerName: 'Maya Krishnan',
       customerCode: 'C-225',
       address: '44 Lake View Street, Mogappair East',
@@ -90,6 +95,7 @@ export class DeliveryListPage {
       extraItems: []
     },
     {
+      id: 3,
       customerName: 'Vignesh Villa',
       customerCode: 'C-091',
       address: '9 Temple Avenue, Shenoy Nagar',
@@ -105,6 +111,7 @@ export class DeliveryListPage {
       extraItems: [{ name: 'Paneer', quantity: '1' }, { name: 'A2 Ghee', quantity: '1' }, { name: 'Butter', quantity: '1' }]
     },
     {
+      id: 4,
       customerName: 'Lakshmi Narayanan',
       customerCode: 'C-048',
       address: '3 North Mada Street, Mylapore',
@@ -120,6 +127,7 @@ export class DeliveryListPage {
       extraItems: [{ name: 'Curd Cup', quantity: '1' }]
     },
     {
+      id: 5,
       customerName: 'Skyline Heights',
       customerCode: 'C-302',
       address: '88 Club House Road, Kilpauk',
@@ -136,8 +144,8 @@ export class DeliveryListPage {
     }
   ];
 
-  constructor() {
-    addIcons({ closeCircleOutline, funnelOutline, locationOutline, searchOutline });
+  constructor(private readonly router: Router) {
+    addIcons({ arrowBackOutline, closeCircleOutline, funnelOutline, locationOutline, searchOutline });
   }
 
   get filteredDeliveries(): DeliveryStop[] {
@@ -204,5 +212,9 @@ export class DeliveryListPage {
 
   clearSearch(): void {
     this.searchTerm = '';
+  }
+
+  openDelivery(stopId: number): void {
+    void this.router.navigate(['/delivery', stopId]);
   }
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { eyeOffOutline, eyeOutline, lockClosedOutline, personCircleOutline } from 'ionicons/icons';
@@ -17,7 +18,7 @@ export class LoginPage {
   password = '';
   showPassword = false;
 
-  constructor() {
+  constructor(private readonly router: Router) {
     addIcons({
       eyeOffOutline,
       eyeOutline,
@@ -38,5 +39,7 @@ export class LoginPage {
     if (!this.canSubmit) {
       return;
     }
+
+    void this.router.navigate(['/dashboard']);
   }
 }
