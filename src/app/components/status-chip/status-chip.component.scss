@@ -5,13 +5,14 @@
 .status-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-height: 30px;
-  padding: 0 12px;
+  padding: 0 11px;
   border-radius: 999px;
+  border: 1px solid transparent;
   background: rgba(var(--app-color-primary-rgb), 0.08);
   color: var(--app-color-text);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   text-transform: capitalize;
@@ -26,26 +27,31 @@
 }
 
 .status-chip[data-tone="positive"] {
-  background: rgba(var(--app-color-primary-rgb), 0.12);
+  border-color: rgba(var(--app-color-primary-rgb), 0.14);
+  background: rgba(var(--app-color-primary-rgb), 0.14);
   color: var(--app-color-primary);
 }
 
 .status-chip[data-tone="accent"] {
-  background: rgba(var(--app-color-tertiary-rgb), 0.14);
-  color: #9f6d1f;
+  border-color: rgba(var(--app-color-tertiary-rgb), 0.2);
+  background: #9f6d1f;
+  color: #fff;
 }
 
 .status-chip[data-tone="neutral"] {
+  border-color: rgba(78, 95, 88, 0.14);
   background: rgba(78, 95, 88, 0.1);
-  color: #51655f;
+  color: #435651;
 }
 
 .status-chip[data-tone="danger"] {
+  border-color: rgba(190, 78, 78, 0.16);
   background: rgba(190, 78, 78, 0.12);
   color: #a24646;
 }
 
 .status-chip[data-tone="muted"] {
+  border-color: rgba(120, 134, 128, 0.14);
   background: rgba(120, 134, 128, 0.1);
   color: #7a8881;
 }

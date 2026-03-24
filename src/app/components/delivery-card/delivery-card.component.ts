@@ -22,6 +22,7 @@ import { DeliveryStatus, ScheduleType, StatusChipComponent } from '../status-chi
   styleUrl: './delivery-card.component.scss',
 })
 export class DeliveryCardComponent {
+  @Input() priority = false;
   @Input() customerName = '';
   @Input() customerCode = '';
   @Input() address = '';

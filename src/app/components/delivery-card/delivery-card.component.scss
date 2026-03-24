@@ -13,25 +13,47 @@
 
 .delivery-card {
   flex-direction: column;
-  gap: 14px;
-  padding: 18px;
-  border: 1px solid rgba(var(--app-color-primary-rgb), 0.08);
-  border-radius: 28px;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(20, 38, 33, 0.08);
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: var(--app-shadow-soft);
+  box-shadow: 0 12px 28px rgba(18, 35, 30, 0.08);
+}
+
+.delivery-card--priority {
+  border-color: rgba(var(--app-color-primary-rgb), 0.26);
+  box-shadow: 0 16px 34px rgba(var(--app-color-primary-rgb), 0.12);
 }
 
 .delivery-card__topline,
 .delivery-card__footer {
   align-items: center;
+}
+
+.delivery-card__topline {
+  gap: 8px;
   justify-content: space-between;
 }
 
 .delivery-card__sequence,
-.delivery-card__slot {
+.delivery-card__slot,
+.delivery-card__priority {
   color: var(--app-color-text-muted);
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.delivery-card__priority {
+  margin-right: auto;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(var(--app-color-primary-rgb), 0.1);
+  color: var(--app-color-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .delivery-card__slot {
@@ -40,16 +62,16 @@
 
 .delivery-card__chips,
 .delivery-card__summary {
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .delivery-card__summary-block {
   flex: 1;
   min-width: 0;
-  padding: 12px 14px;
-  border-radius: 18px;
-  background: rgba(var(--app-color-primary-rgb), 0.06);
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(var(--app-color-primary-rgb), 0.05);
 }
 
 .delivery-card__summary-block span {
@@ -63,15 +85,15 @@
 
 .delivery-card__summary-block strong {
   display: block;
-  margin-top: 6px;
-  font-size: 0.95rem;
+  margin-top: 4px;
+  font-size: 0.93rem;
   letter-spacing: -0.02em;
 }
 
 .delivery-card__action {
-  --border-radius: 18px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
+  --border-radius: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
   margin-left: auto;
   font-weight: 700;
 }
