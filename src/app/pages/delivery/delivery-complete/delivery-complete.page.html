@@ -1,13 +1,192 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>delivery-complete</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">delivery-complete</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="delivery-complete-page">
+    <main class="delivery-complete-shell">
+      <section class="complete-header" aria-label="Completion header">
+        <button class="complete-header__back" type="button" aria-label="Go back">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+
+        <div class="complete-header__copy">
+          <p class="complete-header__eyebrow">{{ routeLabel }} • {{ timeSlot }}</p>
+          <h1>Complete Stop</h1>
+        </div>
+
+        <app-status-chip [kind]="'status'" [value]="currentStatus"></app-status-chip>
+      </section>
+
+      <section class="surface-card surface-card--context">
+        <div class="context-band">
+          <div class="context-band__copy">
+            <strong>{{ customerName }}</strong>
+            <span>{{ itemSummary }}</span>
+          </div>
+          <app-status-chip [kind]="'schedule'" [value]="scheduleType"></app-status-chip>
+        </div>
+
+        <app-customer-info-card
+          [name]="customerName"
+          [customerCode]="customerCode"
+          [address]="address"
+          [landmark]="landmark"
+          [routeLabel]="routeLabel"
+        ></app-customer-info-card>
+      </section>
+
+      <section class="surface-card surface-card--action">
+        <app-section-header
+          title="Select Outcome"
+          subtitle="Choose the final status before attaching proof."
+        ></app-section-header>
+
+        <div class="action-selector">
+          <button
+            type="button"
+            class="action-option"
+            [class.action-option--active]="selectedAction === 'delivered'"
+            (click)="selectAction('delivered')"
+          >
+            <strong>Delivered</strong>
+            <span>Successful handoff</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-option action-option--warning"
+            [class.action-option--active]="selectedAction === 'failed'"
+            (click)="selectAction('failed')"
+          >
+            <strong>Failed</strong>
+            <span>Could not complete</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-option action-option--neutral"
+            [class.action-option--active]="selectedAction === 'skipped'"
+            (click)="selectAction('skipped')"
+          >
+            <strong>Skipped</strong>
+            <span>Deferred to later</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="surface-card surface-card--items">
+        <app-section-header
+          title="Items Confirmed"
+          subtitle="Review the delivery contents before submission."
+        ></app-section-header>
+
+        <app-product-list
+          [milkItems]="milkItems"
+          [extraItems]="extraItems"
+          [layout]="'expanded'"
+        ></app-product-list>
+      </section>
+
+      <section class="surface-card">
+        <app-section-header
+          title="Proof & Notes"
+          subtitle="Only capture what is needed for this outcome."
+          actionText="Reset"
+          (actionPressed)="resetProof()"
+        ></app-section-header>
+
+        <div class="proof-toggle-grid">
+          <button
+            type="button"
+            class="proof-toggle"
+            *ngFor="let option of proofOptions"
+            [class.proof-toggle--active]="proofState[option.key]"
+            (click)="toggleProof(option.key)"
+          >
+            <ion-icon [name]="option.icon" aria-hidden="true"></ion-icon>
+            <div class="proof-toggle__copy">
+              <strong>{{ option.label }}</strong>
+              <span>{{ option.helper }}</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="proof-stack">
+          <div *ngIf="selectedAction === 'delivered' && proofState.otp" class="proof-panel">
+            <label class="proof-panel__label">OTP Verification</label>
+            <input
+              type="text"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="Enter 6-digit OTP"
+              [(ngModel)]="otpCode"
+            />
+          </div>
+
+          <div *ngIf="proofState.photo" class="proof-panel proof-panel--placeholder">
+            <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
+            <div>
+              <strong>Photo Proof</strong>
+              <p>Capture doorstep handoff or delivery placement.</p>
+            </div>
+          </div>
+
+          <div *ngIf="proofState.signature" class="proof-panel proof-panel--placeholder">
+            <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
+            <div>
+              <strong>Signature Proof</strong>
+              <p>Collect recipient sign-off when manual proof is required.</p>
+            </div>
+          </div>
+
+          <div *ngIf="selectedAction !== 'delivered'" class="proof-panel">
+            <label class="proof-panel__label">Reason</label>
+            <div class="reason-grid">
+              <button
+                type="button"
+                class="reason-chip"
+                *ngFor="let reason of reasons"
+                [class.reason-chip--active]="selectedReason === reason"
+                (click)="selectedReason = reason"
+              >
+                {{ reason }}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="proofState.note || selectedAction !== 'delivered'" class="proof-panel">
+            <label class="proof-panel__label">Delivery Note</label>
+            <textarea
+              rows="3"
+              placeholder="Add any handoff or failure note"
+              [(ngModel)]="deliveryNote"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="surface-card">
+        <app-section-header
+          title="Confirmation Summary"
+          subtitle="Review the final outcome before submission."
+        ></app-section-header>
+
+        <div class="confirmation-summary">
+          <div class="confirmation-row">
+            <span>Status</span>
+            <strong>{{ selectedActionLabel }}</strong>
+          </div>
+          <div class="confirmation-row">
+            <span>Proof</span>
+            <strong>{{ proofSummary.length ? proofSummary.join(' • ') : 'No proof attached' }}</strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 </ion-content>
+
+<div class="completion-bar">
+  <button class="completion-bar__ghost" type="button">Cancel</button>
+  <ion-button class="completion-bar__primary" fill="solid">
+    <ion-icon slot="start" [name]="selectedAction === 'delivered' ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+    {{ finalCtaLabel }}
+  </ion-button>
+</div>
