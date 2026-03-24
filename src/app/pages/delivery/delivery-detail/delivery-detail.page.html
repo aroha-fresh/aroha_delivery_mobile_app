@@ -1,13 +1,114 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>delivery-detail</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">delivery-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="delivery-detail-page">
+    <main class="delivery-detail-shell">
+      <section class="detail-header" aria-label="Navigation header">
+        <button class="detail-header__back" type="button" aria-label="Go back">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+
+        <div class="detail-header__copy">
+          <p class="detail-header__eyebrow">{{ sequenceLabel }} • {{ timeSlot }}</p>
+          <h1>{{ customerName }}</h1>
+        </div>
+
+        <app-status-chip [kind]="'status'" [value]="status"></app-status-chip>
+      </section>
+
+      <section class="surface-card">
+        <app-customer-info-card
+          [name]="customerName"
+          [customerCode]="customerCode"
+          [address]="address"
+          [landmark]="landmark"
+          [routeLabel]="routeLabel"
+        ></app-customer-info-card>
+      </section>
+
+      <section class="surface-card">
+        <app-section-header
+          title="Delivery Summary"
+          [meta]="sequenceLabel"
+        ></app-section-header>
+
+        <div class="summary-grid">
+          <div class="summary-meta">
+            <app-status-chip [kind]="'schedule'" [value]="scheduleType"></app-status-chip>
+            <app-status-chip [kind]="'status'" [value]="status"></app-status-chip>
+          </div>
+
+          <div class="summary-line">
+            <span class="summary-line__label">Time slot</span>
+            <strong>{{ timeSlot }}</strong>
+          </div>
+          <div class="summary-line">
+            <span class="summary-line__label">Milk</span>
+            <strong>{{ milkSummary }}</strong>
+          </div>
+          <div class="summary-line">
+            <span class="summary-line__label">Extras</span>
+            <strong>{{ extraSummary }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="surface-card surface-card--items">
+        <app-section-header
+          title="Items to Deliver"
+          subtitle="Verify milk and extra products before confirming."
+        ></app-section-header>
+
+        <app-product-list
+          [milkItems]="milkItems"
+          [extraItems]="extraItems"
+          [layout]="'expanded'"
+        ></app-product-list>
+      </section>
+
+      <section *ngIf="deliveryNotes.length" class="surface-card">
+        <app-section-header title="Delivery Notes"></app-section-header>
+
+        <ul class="instruction-list">
+          <li *ngFor="let note of deliveryNotes">
+            <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+            <span>{{ note }}</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="surface-card">
+        <app-section-header
+          title="Proof of Delivery"
+          subtitle="Capture verification only if required at this stop."
+        ></app-section-header>
+
+        <div class="proof-grid">
+          <button class="proof-card" type="button" *ngFor="let option of proofOptions">
+            <div class="proof-card__icon">
+              <ion-icon [name]="option.icon" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="proof-card__copy">
+              <strong>{{ option.label }}</strong>
+              <span>{{ option.helper }}</span>
+            </div>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
 </ion-content>
+
+<div class="detail-action-bar">
+  <div class="detail-action-bar__context">
+    <span class="detail-action-bar__label">Current stop</span>
+    <strong>{{ customerName }}</strong>
+  </div>
+
+  <div class="detail-action-bar__actions">
+    <button class="detail-action-bar__secondary" type="button">Failed</button>
+    <button class="detail-action-bar__secondary" type="button">Skipped</button>
+    <ion-button class="detail-action-bar__primary" fill="solid">
+      <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+      Mark Delivered
+    </ion-button>
+  </div>
+</div>
