@@ -2,44 +2,56 @@
   <div class="relative min-h-full overflow-hidden">
     <div
       aria-hidden="true"
-      class="absolute inset-0 bg-[linear-gradient(180deg,#fbfdfb_0%,#f3f8f5_42%,#edf4f0_100%)]"
+      class="absolute inset-0 bg-[#F4F7F5]"
     ></div>
     <div
       aria-hidden="true"
-      class="absolute -right-20 -top-16 h-72 w-72 rounded-full bg-[rgba(var(--app-color-primary-rgb),0.12)] blur-3xl"
+      class="absolute -right-24 -top-16 h-80 w-80 rounded-full bg-[rgba(47,174,143,0.10)] blur-3xl"
     ></div>
     <div
       aria-hidden="true"
-      class="absolute -left-16 bottom-10 h-56 w-56 rounded-full bg-[rgba(var(--app-color-tertiary-rgb),0.10)] blur-3xl"
+      class="absolute left-[-68px] top-[40%] h-56 w-56 rounded-full bg-[rgba(31,122,99,0.06)] blur-3xl"
     ></div>
     <div
       aria-hidden="true"
-      class="absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.36),transparent)]"
+      class="absolute -bottom-16 right-[8%] h-64 w-64 rounded-full bg-[rgba(255,255,255,0.38)] blur-3xl"
+    ></div>
+    <div
+      aria-hidden="true"
+      class="absolute inset-x-0 top-0 h-72 bg-[linear-gradient(180deg,rgba(255,255,255,0.34),transparent)]"
     ></div>
 
-    <main class="relative z-10 mx-auto flex min-h-full max-w-[430px] flex-col gap-5 px-4 py-4">
+    <main class="relative z-10 mx-auto flex min-h-full max-w-[430px] flex-col gap-6 px-4 py-4">
       <section
         aria-label="Greeting"
-        class="rounded-[30px] border border-white/80 bg-white/80 p-5 shadow-[0_28px_54px_rgba(18,35,30,0.10)] backdrop-blur-xl"
+        class="relative overflow-hidden rounded-[32px] border border-[#E3ECE8] bg-[linear-gradient(180deg,#FFFFFF_0%,#F9FCFA_100%)] p-6 shadow-[0_18px_36px_rgba(15,42,36,0.08)]"
       >
+        <div
+          aria-hidden="true"
+          class="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(47,174,143,0.10),transparent)]"
+        ></div>
+        <div
+          aria-hidden="true"
+          class="absolute -right-10 -top-8 h-32 w-32 rounded-full bg-[rgba(47,174,143,0.10)] blur-2xl"
+        ></div>
         <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <p class="m-0 text-[0.72rem] font-extrabold uppercase tracking-[0.14em] text-[var(--app-color-primary)]">
+          <div class="relative min-w-0">
+            <p class="m-0 text-[0.72rem] font-extrabold uppercase tracking-[0.16em] text-[#1F7A63]">
               {{ todayLabel }}
             </p>
-            <h1 class="mt-2 text-[clamp(2rem,8vw,2.7rem)] font-bold leading-[0.96] tracking-[-0.065em] text-[#132a24]">
+            <h1 class="mt-3 text-[clamp(2.2rem,9vw,3rem)] font-bold leading-[0.92] tracking-[-0.075em] text-[#0F2A24]">
               {{ greeting }}, {{ agentName }}
             </h1>
             <p
               *ngIf="!loading && !errorMessage"
-              class="mt-3 max-w-[28ch] text-[0.92rem] leading-6 text-[var(--app-color-text-muted)]"
+              class="mt-3 max-w-[28ch] text-[0.94rem] leading-6 text-[#5F746E]"
             >
               {{ totalStops > 0 ? 'Your route is active and ready to start.' : 'No deliveries assigned for today.' }}
             </p>
           </div>
 
           <div
-            class="shrink-0 rounded-full border border-[rgba(var(--app-color-primary-rgb),0.12)] bg-[rgba(var(--app-color-primary-rgb),0.08)] px-3 py-2 text-[0.72rem] font-bold tracking-[0.06em] text-[var(--app-color-primary)]"
+            class="relative shrink-0 rounded-full border border-[#D7E7E1] bg-[#F7FBF9] px-3.5 py-2 text-[0.72rem] font-bold tracking-[0.08em] text-[#1F7A63] shadow-[0_8px_18px_rgba(15,42,36,0.06)]"
           >
             Aroha Fresh
           </div>
@@ -49,33 +61,33 @@
       <section
         *ngIf="loading"
         aria-label="Loading"
-        class="flex flex-col items-center gap-4 rounded-[28px] border border-white/80 bg-white/88 px-5 py-12 text-center shadow-[0_22px_44px_rgba(18,35,30,0.08)]"
+        class="flex flex-col items-center gap-4 rounded-[28px] border border-[#E3ECE8] bg-white px-5 py-12 text-center shadow-[0_14px_30px_rgba(15,42,36,0.06)]"
       >
-        <div class="grid h-14 w-14 place-items-center rounded-full bg-[rgba(var(--app-color-primary-rgb),0.10)]">
-          <ion-spinner class="h-7 w-7 text-[var(--app-color-primary)]" name="crescent"></ion-spinner>
+        <div class="grid h-14 w-14 place-items-center rounded-full bg-[rgba(31,122,99,0.10)]">
+          <ion-spinner class="h-7 w-7 text-[#1F7A63]" name="crescent"></ion-spinner>
         </div>
         <div class="space-y-1">
-          <p class="m-0 text-[1rem] font-semibold tracking-[-0.02em] text-[#173b32]">Loading dashboard</p>
-          <p class="m-0 text-[0.9rem] text-[var(--app-color-text-muted)]">Fetching today’s route overview.</p>
+          <p class="m-0 text-[1rem] font-semibold tracking-[-0.02em] text-[#0F2A24]">Loading dashboard</p>
+          <p class="m-0 text-[0.9rem] text-[#5F746E]">Fetching today’s route overview.</p>
         </div>
       </section>
 
       <section
         *ngIf="!loading && errorMessage"
         aria-label="Error"
-        class="rounded-[28px] border border-[rgba(220,53,69,0.12)] bg-white/92 p-5 text-center shadow-[0_22px_44px_rgba(18,35,30,0.08)]"
+        class="rounded-[28px] border border-[rgba(231,111,81,0.18)] bg-white p-5 text-center shadow-[0_14px_30px_rgba(15,42,36,0.06)]"
       >
         <div class="flex flex-col items-center gap-4">
-          <div class="grid h-14 w-14 place-items-center rounded-full bg-[rgba(220,53,69,0.08)] text-[#c0392b]">
+          <div class="grid h-14 w-14 place-items-center rounded-full bg-[rgba(231,111,81,0.10)] text-[#E76F51]">
             <ion-icon class="text-xl" name="refresh-outline" aria-hidden="true"></ion-icon>
           </div>
           <div class="space-y-1">
-            <p class="m-0 text-[1rem] font-semibold tracking-[-0.02em] text-[#173b32]">Unable to load dashboard</p>
-            <p class="m-0 text-[0.9rem] leading-6 text-[#b2473a]">{{ errorMessage }}</p>
+            <p class="m-0 text-[1rem] font-semibold tracking-[-0.02em] text-[#0F2A24]">Unable to load dashboard</p>
+            <p class="m-0 text-[0.9rem] leading-6 text-[#B86249]">{{ errorMessage }}</p>
           </div>
           <button
             type="button"
-            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-[18px] border border-[rgba(var(--app-color-primary-rgb),0.16)] bg-white px-5 py-3 text-[0.92rem] font-bold text-[var(--app-color-primary)] shadow-[0_10px_24px_rgba(18,35,30,0.06)]"
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-[18px] border border-[#D6E7E1] bg-[#F9FCFA] px-5 py-3 text-[0.92rem] font-bold text-[#1F7A63] shadow-[0_8px_18px_rgba(15,42,36,0.05)]"
             (click)="loadOrders()"
           >
             <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
@@ -87,66 +99,65 @@
       <ng-container *ngIf="!loading && !errorMessage">
         <section
           aria-label="Today delivery summary"
-          class="overflow-hidden rounded-[32px] border border-[rgba(var(--app-color-primary-rgb),0.10)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(246,250,248,0.94)_100%)] p-5 shadow-[0_32px_60px_rgba(18,35,30,0.12)]"
+          class="relative overflow-hidden rounded-[34px] border border-[#DDE9E4] bg-[linear-gradient(180deg,#FFFFFF_0%,#F9FCFA_100%)] p-5 text-[#0F2A24] shadow-[0_22px_48px_rgba(15,42,36,0.10)]"
         >
+          <div
+            aria-hidden="true"
+            class="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(47,174,143,0.12),transparent)]"
+          ></div>
+          <div
+            aria-hidden="true"
+            class="absolute -right-12 top-14 h-36 w-36 rounded-full bg-[rgba(47,174,143,0.10)] blur-3xl"
+          ></div>
           <div class="flex items-start justify-between gap-4">
-            <div class="min-w-0">
-              <p class="m-0 text-[0.74rem] font-extrabold uppercase tracking-[0.14em] text-[var(--app-color-primary)]">
+            <div class="relative min-w-0">
+              <p class="m-0 text-[0.74rem] font-extrabold uppercase tracking-[0.16em] text-[#1F7A63]">
                 Today’s deliveries
               </p>
-              <h2 class="mt-2 text-[2.2rem] font-bold leading-[0.92] tracking-[-0.07em] text-[#132a24]">
+              <h2 class="mt-2 text-[2.8rem] font-bold leading-[0.88] tracking-[-0.08em] text-[#0F2A24]">
                 {{ totalStops }}
               </h2>
-              <p class="mt-2 text-[0.95rem] font-medium text-[var(--app-color-text-muted)]">
+              <p class="mt-2 text-[0.95rem] font-medium text-[#5F746E]">
                 {{ totalStops === 1 ? 'stop assigned' : 'stops assigned' }}
               </p>
             </div>
 
             <div
               *ngIf="totalStops > 0"
-              class="grid h-14 min-w-[64px] place-items-center rounded-[18px] border border-[rgba(var(--app-color-primary-rgb),0.12)] bg-[rgba(var(--app-color-primary-rgb),0.08)] px-3 text-[1.05rem] font-extrabold tracking-[-0.03em] text-[var(--app-color-primary)]"
+              class="grid h-16 min-w-[70px] place-items-center rounded-[20px] border border-[#D7E7E1] bg-[#F7FBF9] px-3 text-[1.08rem] font-extrabold tracking-[-0.03em] text-[#1F7A63] shadow-[0_10px_22px_rgba(15,42,36,0.06)]"
             >
               {{ progressPercent }}%
             </div>
           </div>
 
           <div *ngIf="totalStops > 0" class="mt-5">
-            <div class="h-3 overflow-hidden rounded-full bg-[rgba(var(--app-color-primary-rgb),0.08)]">
+            <div class="h-3 overflow-hidden rounded-full bg-[#E6F1EC]">
               <span
-                class="block h-full rounded-full bg-[linear-gradient(90deg,#245f52_0%,#3bb37a_100%)]"
+                class="block h-full rounded-full bg-[linear-gradient(90deg,#1F7A63_0%,#2FAE8F_100%)]"
                 [style.width.%]="progressPercent"
               ></span>
             </div>
-            <p class="mt-3 text-[0.9rem] font-medium text-[var(--app-color-text-muted)]">
+            <p class="mt-3 text-[0.9rem] font-medium text-[#5F746E]">
               {{ completedStops }} completed • {{ pendingStops }} pending
             </p>
           </div>
 
-          <div class="mt-5 grid grid-cols-3 gap-3">
-            <article class="rounded-[20px] bg-white/80 p-3.5 shadow-[0_12px_28px_rgba(18,35,30,0.05)]">
-              <span class="block text-[0.7rem] font-bold uppercase tracking-[0.08em] text-[var(--app-color-text-muted)]">
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            <article class="rounded-[22px] border border-[#E3ECE8] bg-[#FCFEFD] p-3.5 shadow-[0_10px_20px_rgba(15,42,36,0.04)]">
+              <span class="block text-[0.7rem] font-bold uppercase tracking-[0.08em] text-[#5F746E]">
                 Completed
               </span>
-              <strong class="mt-2 block text-[1.2rem] font-bold tracking-[-0.04em] text-[#173b32]">
+              <strong class="mt-2 block text-[1.28rem] font-bold tracking-[-0.05em] text-[#0F2A24]">
                 {{ completedStops }}
               </strong>
             </article>
 
-            <article class="rounded-[20px] bg-white/80 p-3.5 shadow-[0_12px_28px_rgba(18,35,30,0.05)]">
-              <span class="block text-[0.7rem] font-bold uppercase tracking-[0.08em] text-[var(--app-color-text-muted)]">
+            <article class="rounded-[22px] border border-[#E3ECE8] bg-[#FCFEFD] p-3.5 shadow-[0_10px_20px_rgba(15,42,36,0.04)]">
+              <span class="block text-[0.7rem] font-bold uppercase tracking-[0.08em] text-[#5F746E]">
                 Pending
               </span>
-              <strong class="mt-2 block text-[1.2rem] font-bold tracking-[-0.04em] text-[#173b32]">
+              <strong class="mt-2 block text-[1.28rem] font-bold tracking-[-0.05em] text-[#0F2A24]">
                 {{ pendingStops }}
-              </strong>
-            </article>
-
-            <article class="rounded-[20px] bg-white/80 p-3.5 shadow-[0_12px_28px_rgba(18,35,30,0.05)]">
-              <span class="block text-[0.7rem] font-bold uppercase tracking-[0.08em] text-[var(--app-color-text-muted)]">
-                Shift
-              </span>
-              <strong class="mt-2 block text-[1.2rem] font-bold tracking-[-0.04em] text-[#173b32]">
-                {{ shiftStatus }}
               </strong>
             </article>
           </div>
@@ -154,7 +165,7 @@
           <button
             type="button"
             routerLink="/deliveries"
-            class="mt-5 inline-flex min-h-[58px] w-full items-center justify-center gap-2 rounded-[22px] bg-[linear-gradient(180deg,#2f6d5f_0%,#245f52_100%)] px-5 py-4 text-[0.98rem] font-extrabold tracking-[0.01em] text-white shadow-[0_18px_30px_rgba(var(--app-color-primary-rgb),0.22)] transition hover:-translate-y-px"
+            class="mt-5 inline-flex min-h-[58px] w-full items-center justify-center gap-2 rounded-[22px] bg-[linear-gradient(180deg,#2FAE8F_0%,#1F7A63_100%)] px-5 py-4 text-[0.98rem] font-extrabold tracking-[0.01em] text-white shadow-[0_16px_28px_rgba(31,122,99,0.22)] transition hover:-translate-y-px"
           >
             View Today’s Deliveries
             <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon>
@@ -164,28 +175,46 @@
         <section aria-labelledby="actions-heading" class="space-y-3">
           <div class="flex items-end justify-between gap-3 px-1">
             <div>
-              <h3 id="actions-heading" class="m-0 text-[1.2rem] font-bold tracking-[-0.04em] text-[#173b32]">
+              <h3 id="actions-heading" class="m-0 text-[1.2rem] font-bold tracking-[-0.04em] text-[#0F2A24]">
                 Quick actions
               </h3>
-              <p class="mt-1 text-[0.84rem] text-[var(--app-color-text-muted)]">Jump into the day’s workflow</p>
+              <p class="mt-1 text-[0.84rem] text-[#5F746E]">Jump into the day’s workflow</p>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <button
-              class="group rounded-[24px] border border-white/80 bg-white/88 p-4 text-left shadow-[0_18px_34px_rgba(18,35,30,0.08)] transition hover:-translate-y-px"
+              class="group relative overflow-hidden rounded-[26px] border border-[#DCE8E3] bg-[linear-gradient(180deg,#FFFFFF_0%,#F9FCFA_100%)] px-4 py-4 text-left shadow-[0_12px_24px_rgba(15,42,36,0.05)] transition duration-200 hover:-translate-y-0.5 hover:border-[#CFE1DA] hover:shadow-[0_16px_28px_rgba(15,42,36,0.07)]"
               type="button"
               *ngFor="let action of quickActions"
               [routerLink]="action.route"
             >
-              <div class="flex flex-col gap-4">
-                <div
-                  class="grid h-11 w-11 place-items-center rounded-[16px] bg-[rgba(var(--app-color-primary-rgb),0.08)] text-[var(--app-color-primary)]"
-                >
-                  <ion-icon class="text-[1.1rem]" [name]="action.icon" aria-hidden="true"></ion-icon>
+              <div
+                aria-hidden="true"
+                class="absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(47,174,143,0.06),transparent)]"
+              ></div>
+              <div
+                aria-hidden="true"
+                class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[rgba(47,174,143,0.06)] blur-2xl transition duration-200 group-hover:bg-[rgba(47,174,143,0.08)]"
+              ></div>
+
+              <div class="relative flex min-h-[104px] flex-col justify-between">
+                <div class="flex items-start justify-between gap-3">
+                  <div
+                    class="grid h-13 w-13 place-items-center rounded-[18px] border border-[#D8EAE4] bg-[linear-gradient(180deg,#F7FCFA_0%,#EEF7F3_100%)] text-[#1F7A63] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_14px_rgba(31,122,99,0.07)]"
+                  >
+                    <ion-icon class="text-[1.08rem]" [name]="action.icon" aria-hidden="true"></ion-icon>
+                  </div>
+
+                  <div
+                    class="grid h-8 w-8 place-items-center rounded-full bg-[#F4F8F6] text-[#7A8A85] transition duration-200 group-hover:bg-[#ECF5F1] group-hover:text-[#1F7A63]"
+                  >
+                    <ion-icon class="text-[0.84rem]" name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+                  </div>
                 </div>
-                <div>
-                  <span class="block text-[0.95rem] font-semibold tracking-[-0.02em] text-[#173b32]">
+
+                <div class="pt-4">
+                  <span class="block text-[1rem] font-semibold leading-[1.08] tracking-[-0.03em] text-[#0F2A24]">
                     {{ action.label }}
                   </span>
                 </div>
@@ -197,39 +226,47 @@
         <section
           *ngIf="nextDelivery"
           aria-labelledby="next-stop-heading"
-          class="rounded-[30px] border border-white/80 bg-white/90 p-5 shadow-[0_24px_46px_rgba(18,35,30,0.08)]"
+          class="relative overflow-hidden rounded-[30px] border border-[#DDE9E4] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FCFA_100%)] p-5 shadow-[0_16px_34px_rgba(15,42,36,0.07)]"
         >
+          <div
+            aria-hidden="true"
+            class="absolute inset-y-0 left-0 w-1.5 bg-[linear-gradient(180deg,#1F7A63_0%,#2FAE8F_100%)]"
+          ></div>
+          <div
+            aria-hidden="true"
+            class="absolute -right-10 top-0 h-28 w-28 rounded-full bg-[rgba(47,174,143,0.08)] blur-2xl"
+          ></div>
           <div class="flex items-start justify-between gap-4">
-            <div>
-              <p class="m-0 text-[0.74rem] font-extrabold uppercase tracking-[0.14em] text-[var(--app-color-primary)]">
+            <div class="relative">
+              <p class="m-0 text-[0.74rem] font-extrabold uppercase tracking-[0.14em] text-[#1F7A63]">
                 Next stop
               </p>
-              <h3 id="next-stop-heading" class="mt-2 text-[1.38rem] font-bold leading-tight tracking-[-0.05em] text-[#132a24]">
+              <h3 id="next-stop-heading" class="mt-2 text-[1.38rem] font-bold leading-tight tracking-[-0.05em] text-[#0F2A24]">
                 {{ nextDelivery.customerName }}
               </h3>
             </div>
 
             <div
               *ngIf="nextDelivery.timeSlot"
-              class="shrink-0 rounded-full border border-[rgba(var(--app-color-primary-rgb),0.12)] bg-[rgba(var(--app-color-primary-rgb),0.06)] px-3 py-2 text-[0.76rem] font-bold tracking-[0.04em] text-[var(--app-color-primary)]"
+              class="shrink-0 rounded-full border border-[#D7E7E1] bg-[#F7FBF9] px-3 py-2 text-[0.76rem] font-bold tracking-[0.04em] text-[#1F7A63]"
             >
               {{ nextDelivery.timeSlot }}
             </div>
           </div>
 
-          <p class="mt-3 text-[0.92rem] leading-6 text-[var(--app-color-text-muted)]">
+          <p class="mt-3 text-[0.92rem] leading-6 text-[#5F746E]">
             {{ nextDeliverySummary }}
           </p>
 
-          <ul class="mt-4 space-y-3 p-0 text-[0.88rem] text-[var(--app-color-text-muted)]">
+          <ul class="mt-4 space-y-3 p-0 text-[0.88rem] text-[#5F746E]">
             <li *ngIf="nextDelivery.area || nextDelivery.address" class="flex items-start gap-3 list-none">
-              <div class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[rgba(var(--app-color-primary-rgb),0.08)] text-[var(--app-color-primary)]">
+              <div class="grid h-10 w-10 shrink-0 place-items-center rounded-[16px] border border-[#D8EAE4] bg-[#F5FBF8] text-[#1F7A63]">
                 <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
               </div>
               <span class="pt-1">{{ nextDelivery.area || nextDelivery.address }}</span>
             </li>
             <li *ngIf="nextDelivery.timeSlot" class="flex items-start gap-3 list-none">
-              <div class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[rgba(var(--app-color-primary-rgb),0.08)] text-[var(--app-color-primary)]">
+              <div class="grid h-10 w-10 shrink-0 place-items-center rounded-[16px] border border-[#D8EAE4] bg-[#F5FBF8] text-[#1F7A63]">
                 <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
               </div>
               <span class="pt-1">{{ nextDelivery.timeSlot }}</span>
@@ -239,7 +276,7 @@
           <button
             type="button"
             routerLink="/deliveries/map"
-            class="mt-5 inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-[20px] border border-[rgba(var(--app-color-primary-rgb),0.14)] bg-[rgba(var(--app-color-primary-rgb),0.05)] px-5 py-4 text-[0.94rem] font-bold text-[var(--app-color-primary)] shadow-[0_14px_28px_rgba(18,35,30,0.05)] transition hover:-translate-y-px"
+            class="mt-5 inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-[20px] border border-[#D7E7E1] bg-[#F7FBF9] px-5 py-4 text-[0.94rem] font-bold text-[#1F7A63] shadow-[0_10px_20px_rgba(15,42,36,0.05)] transition hover:-translate-y-px"
           >
             Route Map
             <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
