@@ -288,9 +288,9 @@ export class DeliveryListPage implements OnInit {
       routeLabel: order.routeLabel ?? `Stop ${String(seq).padStart(2, '0')}`,
       scheduleType: this.normalizeScheduleType(order.scheduleType),
       status: this.normalizeStatus(deliveryStatusValue),
-      deliveryStatusLabel: this.formatStatusLabel(deliveryStatusValue),
-      orderStatusLabel: this.formatStatusLabel(order.orderStatus),
-      productSummary: `${items.length} product${items.length !== 1 ? 's' : ''}`,
+      deliveryStatusLabel: this.getExactStatusLabel(deliveryStatusValue),
+      orderStatusLabel: this.getExactStatusLabel(order.orderStatus),
+      productSummary: this.getProductSummary(order, items.length),
       timeSlot: order.timeSlot ?? '',
       sequenceLabel: `#${String(seq).padStart(2, '0')}`,
       items,
@@ -313,6 +313,22 @@ export class DeliveryListPage implements OnInit {
       .toLowerCase()
       .replace(/[_-]+/g, ' ')
       .replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  private getExactStatusLabel(status?: string): string {
+    return status?.trim() || 'N/A';
+  }
+
+  private getProductSummary(order: DeliveryOrder, itemCountFromItems: number): string {
+    if (order.productSummary?.trim()) {
+      return order.productSummary.trim();
+    }
+
+    if (typeof order.itemCount === 'number') {
+      return `${order.itemCount} product${order.itemCount !== 1 ? 's' : ''}`;
+    }
+
+    return `${itemCountFromItems} product${itemCountFromItems !== 1 ? 's' : ''}`;
   }
 
   private normalizeScheduleType(type?: string): ScheduleType {

@@ -21,7 +21,13 @@ export interface DeliveryOrder {
   orderStatus?: string;
   deliveryDate: string;
   timeSlot?: string;
-  items: OrderItem[];
+  itemCount?: number;
+  productSummary?: string;
+  location?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
+  items?: OrderItem[];
   notes?: string;
   sequence?: number;
 }

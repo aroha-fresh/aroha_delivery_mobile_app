@@ -10,6 +10,10 @@ interface OrdersDataPayload {
   orders?: DeliveryOrder[];
 }
 
+interface OrderDataPayload {
+  order?: DeliveryOrder;
+}
+
 export interface UpdateOrderStatusPayload {
   status: 'DELIVERED' | 'CANCELLED' | 'SKIPPED';
   reason?: string;
@@ -35,9 +39,9 @@ export class OrderService {
   }
 
   getOrderById(orderId: string, filters?: { deliveryDate?: string }): Observable<DeliveryOrder | null> {
-    return this.getOrders(filters).pipe(
-      map((orders) => orders.find((order) => this.getOrderId(order) === orderId) ?? null)
-    );
+    return this.http
+      .get<unknown>(`${this.baseUrl}/orders/${orderId}`)
+      .pipe(map((res) => this.extractOrder(res)));
   }
 
   updateOrderStatus(orderId: string, payload: UpdateOrderStatusPayload): Observable<ApiSuccessResponse> {
@@ -55,6 +59,11 @@ export class OrderService {
   private extractOrders(res: unknown): DeliveryOrder[] {
     const { data } = unwrapApiSuccess<OrdersDataPayload | DeliveryOrder[]>(res, 'Orders loaded');
     return this.extractOrdersArray(data);
+  }
+
+  private extractOrder(res: unknown): DeliveryOrder | null {
+    const { data } = unwrapApiSuccess<OrderDataPayload | DeliveryOrder | undefined>(res, 'Order loaded');
+    return this.extractOrderValue(data);
   }
 
   private extractOrdersArray(data: OrdersDataPayload | DeliveryOrder[] | undefined): DeliveryOrder[] {
@@ -81,7 +90,27 @@ export class OrderService {
     return [];
   }
 
-  private getOrderId(order: DeliveryOrder): string {
-    return order.id ?? order.orderId ?? '';
+  private extractOrderValue(data: OrderDataPayload | DeliveryOrder | undefined): DeliveryOrder | null {
+    if (!data || typeof data !== 'object') {
+      return null;
+    }
+
+    if (this.looksLikeOrder(data)) {
+      return data as DeliveryOrder;
+    }
+
+    const payload = data as Record<string, unknown>;
+    for (const key of ['order', 'data', 'result', 'content']) {
+      const value = payload[key];
+      if (this.looksLikeOrder(value)) {
+        return value as DeliveryOrder;
+      }
+    }
+
+    return null;
+  }
+
+  private looksLikeOrder(value: unknown): value is DeliveryOrder {
+    return !!value && typeof value === 'object' && ('id' in value || 'orderId' in value);
   }
 }
