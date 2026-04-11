@@ -1,11 +1,12 @@
-import { inject, provideAppInitializer } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
-import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
+import { inject, isDevMode, provideAppInitializer } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { RouteReuseStrategy, PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 
-import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
 import { credentialsInterceptor } from './app/interceptors/credentials.interceptor';
 import { AuthService } from './app/services/auth.service';
 
@@ -18,5 +19,9 @@ bootstrapApplication(AppComponent, {
     }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(withFetch(), withInterceptors([credentialsInterceptor])),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 });
