@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { IonButton, IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonIcon, IonRefresher, IonRefresherContent, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -14,31 +14,17 @@ import {
 } from 'ionicons/icons';
 import { DeliveryCardComponent } from 'src/app/components/delivery-card/delivery-card.component';
 import { EmptyStateComponent } from 'src/app/components/empty-state/empty-state.component';
+import { PageShellComponent } from 'src/app/components/page-shell/page-shell.component';
 import { SectionHeaderComponent } from 'src/app/components/section-header/section-header.component';
-import { DeliveryProductItem } from 'src/app/components/product-list/product-list.component';
-import { DeliveryStatus, ScheduleType } from 'src/app/components/status-chip/status-chip.component';
-import { OrderService } from 'src/app/services/order.service';
+import { SurfaceCardComponent } from 'src/app/components/surface-card/surface-card.component';
+import { TopHeaderComponent } from 'src/app/components/top-header/top-header.component';
 import { DeliveryOrder } from 'src/app/models/order.model';
+import { OrderService, buildStaticDeliveryOrdersQuery } from 'src/app/services/order.service';
 import { getApiErrorMessage } from 'src/app/utils/api-contract.util';
+import { formatLocalISODate } from 'src/app/utils/date.util';
+import { DeliveryStopViewModel, mapOrderToDeliveryStopViewModel } from 'src/app/utils/delivery-view.util';
 
-type FilterKey = 'all' | 'pending' | 'delivered';
-
-interface DeliveryStop {
-  id: string;
-  customerName: string;
-  customerCode: string;
-  address: string;
-  landmark: string;
-  routeLabel: string;
-  scheduleType: ScheduleType;
-  status: DeliveryStatus;
-  deliveryStatusLabel: string;
-  orderStatusLabel: string;
-  productSummary: string;
-  timeSlot: string;
-  sequenceLabel: string;
-  items: DeliveryProductItem[];
-}
+type FilterKey = 'all' | 'pending' | 'delivered' | 'cancelled' | 'skipped';
 
 @Component({
   selector: 'app-delivery-list',
@@ -49,26 +35,33 @@ interface DeliveryStop {
     IonButton,
     IonContent,
     IonIcon,
+    IonRefresher,
+    IonRefresherContent,
     IonSpinner,
     CommonModule,
     FormsModule,
     RouterLink,
     DeliveryCardComponent,
     EmptyStateComponent,
+    PageShellComponent,
     SectionHeaderComponent,
+    SurfaceCardComponent,
+    TopHeaderComponent,
   ],
 })
-export class DeliveryListPage implements OnInit {
+export class DeliveryListPage {
   searchTerm = '';
   selectedFilter: FilterKey = 'all';
-  deliveries: DeliveryStop[] = [];
+  deliveries: DeliveryStopViewModel[] = [];
   loading = true;
   errorMessage = '';
 
   readonly filterOptions: { key: FilterKey; label: string }[] = [
     { key: 'all', label: 'All' },
-    { key: 'pending', label: 'Pending' },
+    { key: 'assigned', label: 'Assigned' },
     { key: 'delivered', label: 'Delivered' },
+    { key: 'cancelled', label: 'Cancelled' },
+    { key: 'skipped', label: 'Skipped' },
   ];
 
   constructor(
@@ -85,7 +78,7 @@ export class DeliveryListPage implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  ionViewDidEnter(): void {
     this.loadOrders();
   }
 
@@ -98,14 +91,10 @@ export class DeliveryListPage implements OnInit {
   }
 
   private get todayDate(): string {
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    return formatLocalISODate();
   }
 
-  get filteredDeliveries(): DeliveryStop[] {
+  get filteredDeliveries(): DeliveryStopViewModel[] {
     const query = this.searchTerm.trim().toLowerCase();
 
     return this.deliveries.filter((stop) => {
@@ -118,43 +107,89 @@ export class DeliveryListPage implements OnInit {
 
       const matchesFilter =
         this.selectedFilter === 'all' ||
-        (this.selectedFilter === 'pending' && stop.status !== 'delivered') ||
-        (this.selectedFilter === 'delivered' && stop.status === 'delivered');
+        (this.selectedFilter === 'pending' && (stop.status === 'pending' || stop.status === 'in-progress')) ||
+        (this.selectedFilter === 'delivered' && stop.status === 'delivered') ||
+        (this.selectedFilter === 'cancelled' && stop.status === 'cancelled') ||
+        (this.selectedFilter === 'skipped' && stop.status === 'skipped');
 
       return matchesSearch && matchesFilter;
     });
   }
 
-  get activeStops(): DeliveryStop[] {
-    return this.filteredDeliveries.filter((stop) => stop.status !== 'delivered');
+  get activeStops(): DeliveryStopViewModel[] {
+    return this.filteredDeliveries.filter(
+      (stop) => stop.status === 'pending' || stop.status === 'in-progress'
+    );
   }
 
-  get nextStop(): DeliveryStop | null {
+  get nextStop(): DeliveryStopViewModel | null {
     return this.activeStops[0] ?? null;
   }
 
-  get remainingActiveStops(): DeliveryStop[] {
+  get remainingActiveStops(): DeliveryStopViewModel[] {
     return this.activeStops.slice(1);
   }
 
-  get completedStops(): DeliveryStop[] {
+  get completedStops(): DeliveryStopViewModel[] {
     return this.filteredDeliveries.filter((stop) => stop.status === 'delivered');
+  }
+
+  get cancelledStops(): DeliveryStopViewModel[] {
+    return this.filteredDeliveries.filter((stop) => stop.status === 'cancelled');
+  }
+
+  get skippedStops(): DeliveryStopViewModel[] {
+    return this.filteredDeliveries.filter((stop) => stop.status === 'skipped');
   }
 
   get totalStops(): number {
     return this.deliveries.length;
   }
 
+  get pageTitle(): string {
+    return `Today's Deliveries (${this.totalStops})`;
+  }
+
   get pendingCount(): number {
-    return this.deliveries.filter((stop) => stop.status !== 'delivered').length;
+    return this.deliveries.filter((stop) => stop.status === 'pending' || stop.status === 'in-progress').length;
   }
 
   get completedCount(): number {
     return this.deliveries.filter((stop) => stop.status === 'delivered').length;
   }
 
+  get cancelledCount(): number {
+    return this.deliveries.filter((stop) => stop.status === 'cancelled').length;
+  }
+
+  get skippedCount(): number {
+    return this.deliveries.filter((stop) => stop.status === 'skipped').length;
+  }
+
   get activeFilterCount(): number {
     return Number(this.selectedFilter !== 'all') + Number(this.searchTerm.trim().length > 0);
+  }
+
+  get hasActiveQuery(): boolean {
+    return this.searchTerm.trim().length > 0 || this.selectedFilter !== 'all';
+  }
+
+  get emptyStateIcon(): string {
+    return this.hasActiveQuery ? 'search-outline' : 'file-tray-outline';
+  }
+
+  get emptyStateTitle(): string {
+    return this.hasActiveQuery ? 'No deliveries found' : 'No deliveries assigned';
+  }
+
+  get emptyStateMessage(): string {
+    return this.hasActiveQuery
+      ? 'Try adjusting search or filter selections to find the right stop.'
+      : 'No delivery orders are currently available for today in this service area.';
+  }
+
+  get emptyStateActionText(): string {
+    return this.hasActiveQuery ? 'Show All' : '';
   }
 
   selectFilter(filter: FilterKey): void {
@@ -169,72 +204,41 @@ export class DeliveryListPage implements OnInit {
     void this.router.navigate(['/delivery', stopId]);
   }
 
+  handleRefresh(event: CustomEvent): void {
+    this.orderService.getOrders(buildStaticDeliveryOrdersQuery(this.todayDate)).subscribe({
+      next: (orders) => {
+        this.setDeliveriesFromOrders(orders);
+        this.errorMessage = '';
+        (event.target as HTMLIonRefresherElement).complete();
+      },
+      error: (err: unknown) => {
+        this.errorMessage = getApiErrorMessage(err, 'Unable to refresh deliveries.');
+        (event.target as HTMLIonRefresherElement).complete();
+      },
+    });
+  }
+
   loadOrders(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.orderService.getOrders({ deliveryDate: this.todayDate }).subscribe({
+    this.deliveries = [];
+
+    this.orderService.getOrders(buildStaticDeliveryOrdersQuery(this.todayDate)).subscribe({
       next: (orders) => {
-        this.deliveries = orders.map((order, idx) => this.mapOrderToStop(order, idx));
+        this.setDeliveriesFromOrders(orders);
         this.loading = false;
       },
       error: (err: unknown) => {
-        this.errorMessage = getApiErrorMessage(err, 'Unable to load deliveries. Tap retry to try again.');
+        this.errorMessage = getApiErrorMessage(
+          err,
+          'Unable to load deliveries right now. Check your connection and try again.'
+        );
         this.loading = false;
       },
     });
   }
 
-  private mapOrderToStop(order: DeliveryOrder, index: number): DeliveryStop {
-    const items: DeliveryProductItem[] = (order.items ?? []).map((item) => ({
-      name: item.name ?? 'Item',
-      quantity: [item.quantity, item.unit].filter(Boolean).join(' '),
-    }));
-
-    const seq = order.sequence ?? index + 1;
-    const deliveryStatusValue = order.deliveryStatus ?? order.status ?? '';
-
-    return {
-      id: order.id ?? order.orderId ?? String(index),
-      customerName: order.customerName ?? '',
-      customerCode: order.customerCode ?? '',
-      address: order.address ?? '',
-      landmark: order.landmark ?? '',
-      routeLabel: order.routeLabel ?? `Stop ${String(seq).padStart(2, '0')}`,
-      scheduleType: this.normalizeScheduleType(order.scheduleType),
-      status: this.normalizeStatus(deliveryStatusValue),
-      deliveryStatusLabel: this.formatStatusLabel(deliveryStatusValue),
-      orderStatusLabel: this.formatStatusLabel(order.orderStatus),
-      productSummary: `${items.length} product${items.length !== 1 ? 's' : ''}`,
-      timeSlot: order.timeSlot ?? '',
-      sequenceLabel: `#${String(seq).padStart(2, '0')}`,
-      items,
-    };
-  }
-
-  private normalizeStatus(status?: string): DeliveryStatus {
-    if (!status) return 'pending';
-    const s = status.toUpperCase();
-    if (s === 'DELIVERED' || s === 'COMPLETED') return 'delivered';
-    if (s === 'IN_PROGRESS' || s === 'IN-PROGRESS' || s === 'STARTED') return 'in-progress';
-    if (s === 'FAILED' || s === 'CANCELLED' || s === 'CANCELED') return 'failed';
-    if (s === 'SKIPPED') return 'skipped';
-    return 'pending';
-  }
-
-  private formatStatusLabel(status?: string): string {
-    if (!status || !status.trim()) return 'N/A';
-    return status
-      .toLowerCase()
-      .replace(/[_-]+/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  }
-
-  private normalizeScheduleType(type?: string): ScheduleType {
-    if (!type) return 'daily';
-    const t = type.toLowerCase().replace(/_/g, '-');
-    if (t.includes('alternate')) return 'alternate-day';
-    if (t.includes('one') && t.includes('time')) return 'one-time';
-    if (t === 'onetime') return 'one-time';
-    return 'daily';
+  private setDeliveriesFromOrders(orders: DeliveryOrder[]): void {
+    this.deliveries = orders.map((order, idx) => mapOrderToDeliveryStopViewModel(order, idx));
   }
 }

@@ -1,72 +1,91 @@
 <ion-content [fullscreen]="true">
-  <div class="delivery-list-page">
-    <main class="delivery-list-shell">
-      <section class="delivery-list-header" aria-label="Screen heading">
-        <div>
-          <p class="delivery-list-header__eyebrow">{{ todayLabel }}</p>
-          <h1>Today's Deliveries ({{ totalStops }})</h1>
-          <p class="delivery-list-header__subtitle">{{ pendingCount }} Pending • {{ completedCount }} Completed</p>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingText="Pull to refresh" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  <app-page-shell>
+    <app-top-header
+      [eyebrow]="todayLabel"
+      title="Today's Deliveries"
+    >
+      <ion-button
+        header-end
+        class="delivery-list-header__map"
+        fill="solid"
+        aria-label="Open route map"
+        routerLink="/map"
+      >
+        <ion-icon name="location-outline"></ion-icon>
+      </ion-button>
+    </app-top-header>
+
+    <app-surface-card *ngIf="loading" class="loading-state" aria-label="Loading" tone="muted">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading deliveries...</p>
+    </app-surface-card>
+
+    <app-surface-card *ngIf="!loading && errorMessage" class="error-state" aria-label="Error" tone="danger">
+      <p>{{ errorMessage }}</p>
+      <ion-button fill="outline" size="small" (click)="loadOrders()">
+        <ion-icon slot="start" name="refresh-outline"></ion-icon>
+        Retry
+      </ion-button>
+    </app-surface-card>
+
+    <ng-container *ngIf="!loading && !errorMessage">
+      <app-surface-card class="control-deck" aria-label="Route summary and filters">
+        <div class="control-deck__summary">
+          <div class="control-deck__lead">
+            <p class="control-deck__eyebrow">Route overview</p>
+            <h2>{{ totalStops }}</h2>
+            <p class="control-deck__caption">{{ totalStops === 1 ? 'stop today' : 'stops today' }}</p>
+          </div>
         </div>
 
-        <ion-button class="delivery-list-header__map" fill="solid" aria-label="Back to dashboard" routerLink="/dashboard">
-          <ion-icon name="arrow-back-outline"></ion-icon>
-        </ion-button>
-        <ion-button class="delivery-list-header__map" fill="solid" aria-label="Open route map" routerLink="/deliveries/map">
-          <ion-icon name="location-outline"></ion-icon>
-        </ion-button>
-      </section>
-
-      <!-- Loading state -->
-      <section *ngIf="loading" class="loading-state" aria-label="Loading">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Loading deliveries...</p>
-      </section>
-
-      <!-- Error state -->
-      <section *ngIf="!loading && errorMessage" class="error-state" aria-label="Error">
-        <p>{{ errorMessage }}</p>
-        <ion-button fill="outline" size="small" (click)="loadOrders()">
-          <ion-icon slot="start" name="refresh-outline"></ion-icon>
-          Retry
-        </ion-button>
-      </section>
-
-      <!-- Content (loaded) -->
-      <ng-container *ngIf="!loading && !errorMessage">
-        <section class="summary-strip" aria-label="Delivery summary">
+        <div class="control-deck__stats">
           <article class="summary-pill">
-            <span>Total</span>
-            <strong>{{ totalStops }}</strong>
-          </article>
-          <article class="summary-pill">
-            <span>Pending</span>
+            <span>Assigned</span>
             <strong>{{ pendingCount }}</strong>
           </article>
-          <article class="summary-pill summary-pill--accent">
-            <span>Completed</span>
+          <article class="summary-pill summary-pill--soft">
+            <span>Delivered</span>
             <strong>{{ completedCount }}</strong>
           </article>
-        </section>
+          <article class="summary-pill summary-pill--muted">
+            <span>Closed</span>
+            <strong>{{ resolvedCount }}</strong>
+          </article>
+        </div>
 
-        <section class="search-panel" aria-label="Search and filters">
+        <div class="control-deck__search-row">
           <label class="search-field">
             <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
             <input
               type="search"
               name="searchTerm"
-              placeholder="Search customer, code, or address"
+              placeholder="Search customer or address"
               [(ngModel)]="searchTerm"
               aria-label="Search deliveries"
             />
-            <button *ngIf="searchTerm" class="search-field__clear" type="button" (click)="clearSearch()" aria-label="Clear search">
+
+            <button
+              *ngIf="searchTerm"
+              class="search-field__clear"
+              type="button"
+              (click)="clearSearch()"
+              aria-label="Clear search"
+            >
               <ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon>
             </button>
-            <button class="search-field__filter" type="button" aria-label="Open filters">
-              <ion-icon name="funnel-outline" aria-hidden="true"></ion-icon>
-              <span *ngIf="activeFilterCount" class="search-field__filter-count">{{ activeFilterCount }}</span>
-            </button>
-          </label>
 
+            <div class="search-field__filter" aria-hidden="true">
+              <ion-icon name="funnel-outline"></ion-icon>
+              <span *ngIf="activeFilterCount" class="search-field__filter-count">{{ activeFilterCount }}</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="control-deck__filters">
           <div class="filter-rail">
             <button
               *ngFor="let filter of filterOptions"
@@ -78,105 +97,110 @@
               {{ filter.label }}
             </button>
           </div>
+        </div>
+      </app-surface-card>
+
+      <ng-container *ngIf="filteredDeliveries.length; else emptyResult">
+        <section *ngIf="nextStop" class="list-section list-section--next">
+          <div class="next-stop-intro">
+            <p class="next-stop-intro__eyebrow">Next stop</p>
+            <div class="next-stop-intro__row">
+              <div>
+                <h2>Open next delivery</h2>
+                <p>{{ nextStop.sequenceLabel }} assigned in route order</p>
+              </div>
+            </div>
+          </div>
+
+          <app-delivery-card
+            [stop]="nextStop"
+            [priority]="true"
+            [actionable]="isAssignedStop(nextStop)"
+            actionText="Open Stop"
+            (cardPressed)="openDelivery(nextStop.id)"
+            (actionPressed)="openDelivery(nextStop.id)"
+          ></app-delivery-card>
         </section>
 
-        <ng-container *ngIf="filteredDeliveries.length; else emptyResult">
-          <section *ngIf="nextStop" class="list-section">
-            <app-section-header
-              title="Next Stop"
-              [meta]="nextStop.sequenceLabel"
-            ></app-section-header>
+        <section *ngIf="remainingActiveStops.length" class="list-section">
+          <app-section-header
+            title="Assigned stops"
+            [meta]="remainingActiveStops.length + ' remaining'"
+          ></app-section-header>
 
+          <div class="delivery-list-stack">
             <app-delivery-card
-              [priority]="true"
-              [customerName]="nextStop.customerName"
-              [customerCode]="nextStop.customerCode"
-              [address]="nextStop.address"
-              [landmark]="nextStop.landmark"
-              [routeLabel]="nextStop.routeLabel"
-              [scheduleType]="nextStop.scheduleType"
-              [status]="nextStop.status"
-              [deliveryStatusLabel]="nextStop.deliveryStatusLabel"
-              [orderStatusLabel]="nextStop.orderStatusLabel"
-              [productSummary]="nextStop.productSummary"
-              [timeSlot]="nextStop.timeSlot"
-              [sequenceLabel]="nextStop.sequenceLabel"
-              [items]="nextStop.items"
+              [stop]="stop"
+              *ngFor="let stop of remainingActiveStops"
+              [actionable]="isAssignedStop(stop)"
               actionText="Open Stop"
-              (cardPressed)="openDelivery(nextStop.id)"
-              (actionPressed)="openDelivery(nextStop.id)"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
             ></app-delivery-card>
-          </section>
+          </div>
+        </section>
 
-          <section *ngIf="remainingActiveStops.length" class="list-section">
-            <app-section-header
-              title="Active Stops"
-              [meta]="remainingActiveStops.length + ' stops'"
-            ></app-section-header>
+        <section *ngIf="resolvedStops.length" class="list-section list-section--completed">
+          <app-section-header
+            title="Closed stops"
+            [meta]="resolvedStops.length + ' total'"
+          ></app-section-header>
 
-            <div class="delivery-list-stack">
-              <app-delivery-card
-                *ngFor="let stop of remainingActiveStops"
-                [customerName]="stop.customerName"
-                [customerCode]="stop.customerCode"
-                [address]="stop.address"
-                [landmark]="stop.landmark"
-                [routeLabel]="stop.routeLabel"
-                [scheduleType]="stop.scheduleType"
-                [status]="stop.status"
-                [deliveryStatusLabel]="stop.deliveryStatusLabel"
-                [orderStatusLabel]="stop.orderStatusLabel"
-                [productSummary]="stop.productSummary"
-                [timeSlot]="stop.timeSlot"
-                [sequenceLabel]="stop.sequenceLabel"
-                [items]="stop.items"
-                actionText="Open Stop"
-                (cardPressed)="openDelivery(stop.id)"
-                (actionPressed)="openDelivery(stop.id)"
-              ></app-delivery-card>
-            </div>
-          </section>
+          <div class="delivery-list-stack delivery-list-stack--completed">
+            <app-delivery-card
+              [stop]="stop"
+              *ngFor="let stop of completedStops"
+              actionText="View Details"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
+            ></app-delivery-card>
+          </div>
+        </section>
 
-          <section *ngIf="completedStops.length" class="list-section">
-            <app-section-header
-              title="Completed"
-              [meta]="completedStops.length + ' done'"
-            ></app-section-header>
+        <section *ngIf="cancelledStops.length" class="list-section list-section--cancelled">
+          <app-section-header
+            title="Cancelled"
+            [meta]="cancelledStops.length + ' stop(s)'"
+          ></app-section-header>
 
-            <div class="delivery-list-stack delivery-list-stack--completed">
-              <app-delivery-card
-                *ngFor="let stop of completedStops"
-                [customerName]="stop.customerName"
-                [customerCode]="stop.customerCode"
-                [address]="stop.address"
-                [landmark]="stop.landmark"
-                [routeLabel]="stop.routeLabel"
-                [scheduleType]="stop.scheduleType"
-                [status]="stop.status"
-                [deliveryStatusLabel]="stop.deliveryStatusLabel"
-                [orderStatusLabel]="stop.orderStatusLabel"
-                [productSummary]="stop.productSummary"
-                [timeSlot]="stop.timeSlot"
-                [sequenceLabel]="stop.sequenceLabel"
-                [items]="stop.items"
-                actionText="View Stop"
-                (cardPressed)="openDelivery(stop.id)"
-                (actionPressed)="openDelivery(stop.id)"
-              ></app-delivery-card>
-            </div>
-          </section>
-        </ng-container>
+          <div class="delivery-list-stack">
+            <app-delivery-card
+              [stop]="stop"
+              *ngFor="let stop of cancelledStops"
+              actionText="View Details"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
+            ></app-delivery-card>
+          </div>
+        </section>
 
-        <ng-template #emptyResult>
-          <app-empty-state
-            icon="search-outline"
-            title="No deliveries found"
-            message="Try adjusting search or filter selections to find the right stop."
-            actionText="Show All"
-            (actionPressed)="searchTerm = ''; selectFilter('all')"
-          ></app-empty-state>
-        </ng-template>
+        <section *ngIf="skippedStops.length" class="list-section list-section--skipped">
+          <app-section-header
+            title="Skipped"
+            [meta]="skippedStops.length + ' stop(s)'"
+          ></app-section-header>
+
+          <div class="delivery-list-stack">
+            <app-delivery-card
+              [stop]="stop"
+              *ngFor="let stop of skippedStops"
+              actionText="View Details"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
+            ></app-delivery-card>
+          </div>
+        </section>
       </ng-container>
-    </main>
-  </div>
+
+      <ng-template #emptyResult>
+        <app-empty-state
+          [icon]="emptyStateIcon"
+          [title]="emptyStateTitle"
+          [message]="emptyStateMessage"
+          [actionText]="emptyStateActionText"
+          (actionPressed)="searchTerm = ''; selectFilter('all')"
+        ></app-empty-state>
+      </ng-template>
+    </ng-container>
+  </app-page-shell>
 </ion-content>

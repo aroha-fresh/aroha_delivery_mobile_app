@@ -1,14 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  IonIcon,
+  IonLabel,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { ellipsisHorizontalOutline, homeOutline, listOutline, mapOutline, navigateOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-main-layout',
+  standalone: true,
+  imports: [
+    IonIcon,
+    IonLabel,
+    IonTabBar,
+    IonTabButton,
+    IonTabs,
+    RouterLink,
+    RouterLinkActive,
+  ],
   templateUrl: './main-layout.component.html',
-  styleUrls: ['./main-layout.component.scss'],
+  styleUrl: './main-layout.component.scss',
 })
-export class MainLayoutComponent  implements OnInit {
+export class MainLayoutComponent {
+  constructor(private readonly router: Router) {
+    addIcons({
+      ellipsisHorizontalOutline,
+      homeOutline,
+      listOutline,
+      mapOutline,
+      navigateOutline,
+    });
+  }
 
-  constructor() { }
+  get isMoreTabActive(): boolean {
+    return ['/more', '/profile', '/day-summary'].some((path) => this.router.url.startsWith(path));
+  }
 
-  ngOnInit() {}
-
+  get isListTabActive(): boolean {
+    return this.router.url.startsWith('/deliveries') || this.router.url.startsWith('/delivery/');
+  }
 }

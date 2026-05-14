@@ -1,3 +1,45 @@
-<p>
-  main-layout works!
-</p>
+<ion-tabs class="main-layout">
+  <ion-tab-bar slot="bottom" class="main-tabs">
+    <ion-tab-button
+      tab="dashboard"
+      routerLink="/dashboard"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <ion-icon name="home-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="deliveries"
+      routerLink="/deliveries"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [class.tab-selected]="isListTabActive"
+    >
+      <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+      <ion-label>List View</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="map"
+      routerLink="/map"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Map View</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      tab="more"
+      routerLink="/more"
+      routerLinkActive="tab-selected"
+      [class.tab-selected]="isMoreTabActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <ion-icon name="ellipsis-horizontal-outline" aria-hidden="true"></ion-icon>
+      <ion-label>More</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

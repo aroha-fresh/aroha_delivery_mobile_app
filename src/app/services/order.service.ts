@@ -5,9 +5,35 @@ import { environment } from 'src/environments/environment';
 import { DeliveryOrder } from '../models/order.model';
 import { ApiSuccessResponse } from '../models/auth.model';
 import { unwrapApiSuccess } from '../utils/api-contract.util';
+import { CHANDANAGAR_CENTER } from '../utils/mock-coordinates.util';
 
 interface OrdersDataPayload {
   orders?: DeliveryOrder[];
+}
+
+interface OrderDataPayload {
+  order?: DeliveryOrder;
+}
+
+export interface GetOrdersFilters {
+  status?: string;
+  deliveryDate?: string;
+  lat?: number;
+  lng?: number;
+  page?: number;
+  limit?: number;
+}
+
+export function buildStaticDeliveryOrdersQuery(deliveryDate: string): Readonly<
+  Required<Pick<GetOrdersFilters, 'deliveryDate' | 'lat' | 'lng' | 'page' | 'limit'>>
+> {
+  return {
+    deliveryDate,
+    lat: CHANDANAGAR_CENTER.lat,
+    lng: CHANDANAGAR_CENTER.lng,
+    page: 1,
+    limit: 20,
+  };
 }
 
 export interface UpdateOrderStatusPayload {
@@ -17,13 +43,23 @@ export interface UpdateOrderStatusPayload {
   notes?: string;
 }
 
+export interface DeliveryAnalytics {
+  date: string;
+  total: number;
+  delivered: number;
+  cancelled: number;
+  skipped: number;
+  pending: number;
+  completionRate: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class OrderService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/order/delivery`;
 
   constructor(private readonly http: HttpClient) {}
 
-  getOrders(filters?: { status?: string; deliveryDate?: string }): Observable<DeliveryOrder[]> {
+  getOrders(filters?: GetOrdersFilters): Observable<DeliveryOrder[]> {
     let params = new HttpParams();
     if (filters?.status) {
       params = params.set('status', filters.status);
@@ -31,12 +67,35 @@ export class OrderService {
     if (filters?.deliveryDate) {
       params = params.set('deliveryDate', filters.deliveryDate);
     }
+    if (typeof filters?.lat === 'number') {
+      params = params.set('lat', String(filters.lat));
+    }
+    if (typeof filters?.lng === 'number') {
+      params = params.set('lng', String(filters.lng));
+    }
+    if (typeof filters?.page === 'number') {
+      params = params.set('page', String(filters.page));
+    }
+    if (typeof filters?.limit === 'number') {
+      params = params.set('limit', String(filters.limit));
+    }
     return this.http.get<unknown>(`${this.baseUrl}/orders`, { params }).pipe(map((res) => this.extractOrders(res)));
   }
 
   getOrderById(orderId: string, filters?: { deliveryDate?: string }): Observable<DeliveryOrder | null> {
-    return this.getOrders(filters).pipe(
-      map((orders) => orders.find((order) => this.getOrderId(order) === orderId) ?? null)
+    return this.http
+      .get<unknown>(`${this.baseUrl}/orders/${orderId}`)
+      .pipe(map((res) => this.extractOrder(res)));
+  }
+
+  getMyAnalytics(date?: string): Observable<DeliveryAnalytics> {
+    let params = new HttpParams();
+    if (date) params = params.set('date', date);
+    return this.http.get<unknown>(`${this.baseUrl}/analytics`, { params }).pipe(
+      map((res) => {
+        const { data } = unwrapApiSuccess<DeliveryAnalytics>(res, 'Analytics loaded');
+        return data ?? { date: date ?? '', total: 0, delivered: 0, cancelled: 0, skipped: 0, pending: 0, completionRate: 0 };
+      })
     );
   }
 
@@ -55,6 +114,11 @@ export class OrderService {
   private extractOrders(res: unknown): DeliveryOrder[] {
     const { data } = unwrapApiSuccess<OrdersDataPayload | DeliveryOrder[]>(res, 'Orders loaded');
     return this.extractOrdersArray(data);
+  }
+
+  private extractOrder(res: unknown): DeliveryOrder | null {
+    const { data } = unwrapApiSuccess<OrderDataPayload | DeliveryOrder | undefined>(res, 'Order loaded');
+    return this.extractOrderValue(data);
   }
 
   private extractOrdersArray(data: OrdersDataPayload | DeliveryOrder[] | undefined): DeliveryOrder[] {
@@ -81,7 +145,27 @@ export class OrderService {
     return [];
   }
 
-  private getOrderId(order: DeliveryOrder): string {
-    return order.id ?? order.orderId ?? '';
+  private extractOrderValue(data: OrderDataPayload | DeliveryOrder | undefined): DeliveryOrder | null {
+    if (!data || typeof data !== 'object') {
+      return null;
+    }
+
+    if (this.looksLikeOrder(data)) {
+      return data as DeliveryOrder;
+    }
+
+    const payload = data as Record<string, unknown>;
+    for (const key of ['order', 'data', 'result', 'content']) {
+      const value = payload[key];
+      if (this.looksLikeOrder(value)) {
+        return value as DeliveryOrder;
+      }
+    }
+
+    return null;
+  }
+
+  private looksLikeOrder(value: unknown): value is DeliveryOrder {
+    return !!value && typeof value === 'object' && ('id' in value || 'orderId' in value);
   }
 }

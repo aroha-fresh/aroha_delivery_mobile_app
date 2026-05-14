@@ -1,3 +1,5 @@
+@use 'tailwindcss';
+
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
@@ -25,13 +27,118 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
+/*
+ * Dark mode is intentionally disabled — the app is designed for outdoor
+ * delivery use with a fixed light-mode brand palette. Enabling system dark
+ * mode would invert all hardcoded brand colours.
  */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+:root {
+  --app-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ion-font-family: var(--app-font-family);
+  --app-native-status-bar-height: 0px;
+  --app-safe-area-top: max(env(safe-area-inset-top, 0px), var(--app-native-status-bar-height));
+  --app-safe-area-right: env(safe-area-inset-right, 0px);
+  --app-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --app-safe-area-left: env(safe-area-inset-left, 0px);
+  --app-page-bottom-space: calc(var(--app-safe-area-bottom) + 16px);
+}
+
+html,
+body,
+ion-app,
+ion-content,
+ion-input,
+ion-button,
+ion-title,
+ion-label,
+ion-text,
+button,
+input,
+textarea,
+select {
+  font-family: var(--app-font-family);
+}
+
+html,
+body,
+ion-app {
+  background: var(--app-color-secondary);
+}
+
+ion-content {
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+/* Force light mode — brand palette only works in light. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-background-color: #f3f7f5;
+    --ion-background-color-rgb: 243, 247, 245;
+    --ion-text-color: #16231f;
+    --ion-text-color-rgb: 22, 35, 31;
+    --ion-color-step-50: #f3f7f5;
+    --ion-color-step-100: #edf4f0;
+    --ion-color-step-150: #e7f0ea;
+    --ion-color-step-200: #e1ece5;
+    --ion-item-background: #ffffff;
+    --ion-card-background: #ffffff;
+    --ion-toolbar-background: #f3f7f5;
+    --ion-tab-bar-background: rgba(255,255,255,0.92);
+    color-scheme: light;
+  }
+}
+
+.app-confirm-alert {
+  --backdrop-opacity: 0.36;
+}
+
+.app-confirm-alert .alert-wrapper {
+  width: min(92vw, 22rem);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(var(--app-color-tertiary-rgb), 0.14), transparent 9rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 245, 240, 0.98));
+  box-shadow: 0 24px 48px rgba(17, 31, 27, 0.18);
+}
+
+.app-confirm-alert .alert-head {
+  padding: 24px 24px 8px;
+}
+
+.app-confirm-alert .alert-title {
+  color: var(--app-color-text);
+  font-size: 1.28rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.app-confirm-alert .alert-message {
+  padding: 0 24px 18px;
+  color: var(--app-color-text-muted);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.app-confirm-alert .alert-button-group {
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+
+.app-confirm-alert .alert-button {
+  min-height: 44px;
+  margin: 0;
+  border-radius: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.app-confirm-alert .app-confirm-alert__cancel {
+  color: var(--app-color-text-muted);
+}
+
+.app-confirm-alert .app-confirm-alert__confirm {
+  background: var(--app-color-primary);
+  color: #fff;
+}

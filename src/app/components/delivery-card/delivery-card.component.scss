@@ -13,17 +13,47 @@
 
 .delivery-card {
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  gap: 11px;
+  padding: 14px 14px 14px 18px;
   border: 1px solid rgba(20, 38, 33, 0.08);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 12px 28px rgba(18, 35, 30, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: var(--app-shadow-card, 0 12px 28px rgba(14, 32, 26, 0.07));
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.delivery-card:active {
+  transform: scale(0.985);
+}
+
+/* Left-edge status stripe */
+.delivery-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 22px 0 0 22px;
+  background: rgba(var(--app-color-primary-rgb), 0.15);
+}
+
+.delivery-card:not(.delivery-card--readonly) {
+  cursor: pointer;
 }
 
 .delivery-card--priority {
-  border-color: rgba(var(--app-color-primary-rgb), 0.26);
-  box-shadow: 0 16px 34px rgba(var(--app-color-primary-rgb), 0.12);
+  border-color: rgba(var(--app-color-primary-rgb), 0.22);
+  box-shadow: 0 16px 32px rgba(var(--app-color-primary-rgb), 0.10);
+}
+.delivery-card--priority::before {
+  background: var(--app-color-primary);
+}
+
+.delivery-card--readonly {
+  background: rgba(255, 255, 255, 0.82);
 }
 
 .delivery-card__topline,
@@ -32,68 +62,216 @@
 }
 
 .delivery-card__topline {
-  gap: 8px;
+  gap: 6px;
   justify-content: space-between;
+}
+
+.delivery-card__left-meta,
+.delivery-card__main,
+.delivery-card__location-copy,
+.delivery-card__summary-item {
+  display: flex;
+}
+
+.delivery-card__left-meta,
+.delivery-card__location-copy {
+  flex-direction: column;
+}
+
+.delivery-card__left-meta {
+  gap: 5px;
 }
 
 .delivery-card__sequence,
 .delivery-card__slot,
 .delivery-card__priority {
   color: var(--app-color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 600;
 }
 
 .delivery-card__priority {
   margin-right: auto;
-  padding: 4px 8px;
+  padding: 4px 7px;
   border-radius: 999px;
   background: rgba(var(--app-color-primary-rgb), 0.1);
   color: var(--app-color-primary);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.035em;
   text-transform: uppercase;
 }
 
 .delivery-card__slot {
-  gap: 6px;
-}
-
-.delivery-card__chips,
-.delivery-card__summary {
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.delivery-card__summary-block {
-  flex: 1;
-  min-width: 0;
-  padding: 10px 12px;
-  border-radius: 16px;
+  gap: 5px;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
   background: rgba(var(--app-color-primary-rgb), 0.05);
 }
 
-.delivery-card__summary-block span {
-  display: block;
+.delivery-card__main {
+  gap: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.delivery-card__identity {
+  min-width: 0;
+}
+
+.delivery-card__name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.delivery-card__name-row h3 {
+  margin: 0;
+  min-width: 0;
+  font-size: 1.02rem;
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  color: var(--app-color-text);
+}
+
+.delivery-card__code {
+  flex-shrink: 0;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(20, 38, 33, 0.05);
+  color: var(--app-color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.delivery-card__route {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  color: var(--app-color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.delivery-card__chips {
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.delivery-card__location {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 11px;
+  border-radius: 16px;
+  background: rgba(var(--app-color-primary-rgb), 0.04);
+}
+
+.delivery-card__location ion-icon {
+  margin-top: 1px;
+  color: var(--app-color-primary);
+}
+
+.delivery-card__location-copy {
+  gap: 3px;
+  min-width: 0;
+}
+
+.delivery-card__location-copy p,
+.delivery-card__location-copy span {
+  margin: 0;
+}
+
+.delivery-card__location-copy p {
+  color: var(--app-color-text);
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.32;
+}
+
+.delivery-card__location-copy span {
   color: var(--app-color-text-muted);
   font-size: 0.76rem;
+  line-height: 1.28;
+}
+
+.delivery-card__summary {
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.delivery-card__summary-item {
+  align-items: center;
+  gap: 6px;
+  color: var(--app-color-text-muted);
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+}
+
+.delivery-card__summary-item ion-icon {
+  color: var(--app-color-primary);
+}
+
+.delivery-card__summary-item strong {
+  color: var(--app-color-primary);
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
-.delivery-card__summary-block strong {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.93rem;
-  letter-spacing: -0.02em;
-}
-
 .delivery-card__action {
-  --border-radius: 16px;
-  --padding-top: 12px;
-  --padding-bottom: 12px;
+  --border-radius: 14px;
+  --padding-top: 9px;
+  --padding-bottom: 9px;
+  --padding-start: 14px;
+  --padding-end: 10px;
+  --box-shadow: 0 6px 16px rgba(var(--app-color-primary-rgb), 0.2);
   margin-left: auto;
   font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 380px) {
+  .delivery-card__main {
+    flex-direction: column;
+  }
+
+  .delivery-card__chips {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 360px) {
+  .delivery-card {
+    padding: 12px 12px 12px 16px;
+    gap: 9px;
+    border-radius: 18px;
+  }
+
+  .delivery-card__name-row h3 {
+    font-size: 0.94rem;
+  }
+
+  .delivery-card__location {
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+
+  .delivery-card__location-copy p {
+    font-size: 0.8rem;
+  }
+
+  .delivery-card__action {
+    --padding-top: 7px;
+    --padding-bottom: 7px;
+    font-size: 0.82rem;
+  }
 }

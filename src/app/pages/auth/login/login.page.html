@@ -1,70 +1,118 @@
-<ion-content [fullscreen]="true" [scrollY]="false">
-  <div class="login-page">
-    <div class="login-page__backdrop" aria-hidden="true"></div>
-    <div class="login-page__glow login-page__glow--top" aria-hidden="true"></div>
-    <div class="login-page__glow login-page__glow--bottom" aria-hidden="true"></div>
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-screen">
+    <div class="login-screen__ambient login-screen__ambient--a" aria-hidden="true"></div>
+    <div class="login-screen__ambient login-screen__ambient--b" aria-hidden="true"></div>
+    <div class="login-screen__ambient login-screen__ambient--c" aria-hidden="true"></div>
+    <div class="login-screen__mist" aria-hidden="true"></div>
 
     <main class="login-shell">
-      <section class="brand-panel" aria-label="App introduction">
-        <div class="brand-mark">
-          <img
-            class="brand-mark__logo"
-            src="https://arohafresh.com/assets/WhatsApp%20Image%202025-09-02%20at%2012.38.22.jpeg"
-            alt="Aroha Fresh logo"
-          />
+      <section class="hero-panel" aria-label="Aroha Fresh branding">
+        <div class="hero-panel__eyebrow">
+          <span class="hero-panel__eyebrow-dot" aria-hidden="true"></span>
+          Aroha Fresh partner app
+        </div>
 
-          <div class="brand-mark__copy">
-            <p class="brand-mark__title">
-              <span>Aroha</span>
-              <strong>Fresh</strong>
-            </p>
-            <span class="brand-mark__eyebrow">Pure • Fresh • Natural</span>
+        <div class="hero-panel__brand">
+          <div class="hero-panel__logo-shell">
+            <img
+              class="hero-panel__logo"
+              src="https://arohafresh.com/assets/WhatsApp%20Image%202025-09-02%20at%2012.38.22.jpeg"
+              alt="Aroha Fresh logo"
+            />
+          </div>
+
+          <div class="hero-panel__brand-copy">
+            <p class="hero-panel__brand-name">Aroha Fresh</p>
+            <p class="hero-panel__brand-tag">Pure • Fresh • Natural</p>
           </div>
         </div>
 
-        <div class="brand-copy">
-          <p class="brand-copy__kicker">Delivery Partner App</p>
+        <div class="hero-panel__copy">
+          <h1>Fresh mornings start here.</h1>
+          <p>Sign in to manage routes, customer deliveries, and proof updates with calm, reliable field access.</p>
+        </div>
+
+        <div class="hero-panel__signals" aria-label="Key product values">
+          <div class="signal-pill">
+            <span class="signal-pill__label">Trusted</span>
+            <strong>Secure access</strong>
+          </div>
+          <div class="signal-pill">
+            <span class="signal-pill__label">Ready</span>
+            <strong>Today’s routes</strong>
+          </div>
         </div>
       </section>
 
-      <section class="login-card" aria-label="Login form">
-        <div class="login-card__header">
-          <h2>Welcome back</h2>
-          <p>Use your delivery credentials to continue securely.</p>
+      <section class="login-sheet" aria-label="Login form">
+        <div class="login-sheet__cap" aria-hidden="true"></div>
+        <div class="login-sheet__header">
+          <div>
+            <p class="login-sheet__eyebrow">Delivery partner sign in</p>
+            <h2>Welcome back</h2>
+          </div>
+          <p class="login-sheet__hint">Use your assigned account credentials to continue.</p>
         </div>
 
-        <form class="login-form" (ngSubmit)="onSubmit()">
-          <label class="field">
-            <span class="field__label">Username</span>
-            <div class="field__control">
-              <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>
+        <form class="login-form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="login-form__group">
+            <label class="field-label" for="username">Username</label>
+
+            <div class="field-shell" [class.field-shell--error]="!!usernameError">
+              <div class="field-shell__icon-wrap">
+                <ion-icon class="field-shell__icon" name="person-circle-outline" aria-hidden="true"></ion-icon>
+              </div>
               <input
+                id="username"
+                class="field-shell__input"
                 type="text"
                 name="username"
                 inputmode="text"
                 autocomplete="username"
-                placeholder="Enter your username"
-                [(ngModel)]="username"
-                aria-label="Username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                enterkeyhint="next"
+                placeholder="Enter username"
+                [ngModel]="username"
+                (ngModelChange)="onUsernameInput($event)"
+                [attr.aria-invalid]="!!usernameError"
+                [attr.aria-describedby]="usernameError ? 'username-error' : null"
               />
             </div>
-          </label>
 
-          <label class="field">
-            <span class="field__label">Password</span>
-            <div class="field__control">
-              <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            <p *ngIf="usernameError" id="username-error" class="field-message field-message--error">
+              {{ usernameError }}
+            </p>
+          </div>
+
+          <div class="login-form__group">
+            <label class="field-label" for="password">Password</label>
+
+            <div class="field-shell" [class.field-shell--error]="!!passwordError">
+              <div class="field-shell__icon-wrap">
+                <ion-icon class="field-shell__icon" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+              </div>
               <input
+                id="password"
+                class="field-shell__input"
                 [type]="showPassword ? 'text' : 'password'"
                 name="password"
                 autocomplete="current-password"
-                placeholder="Enter your password"
-                [(ngModel)]="password"
-                aria-label="Password"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                enterkeyhint="go"
+                placeholder="Enter password"
+                [ngModel]="password"
+                (ngModelChange)="onPasswordInput($event)"
+                [attr.aria-invalid]="!!passwordError"
+                [attr.aria-describedby]="passwordError ? 'password-error' : null"
               />
+
               <button
                 type="button"
-                class="field__toggle"
+                class="field-shell__toggle"
                 (click)="togglePasswordVisibility()"
                 [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
                 [attr.aria-pressed]="showPassword"
@@ -72,26 +120,30 @@
                 <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" aria-hidden="true"></ion-icon>
               </button>
             </div>
-          </label>
 
-          <div *ngIf="errorMessage" class="login-form__error" role="alert">
-            {{ errorMessage }}
+            <p *ngIf="passwordError" id="password-error" class="field-message field-message--error">
+              {{ passwordError }}
+            </p>
           </div>
+
+          <p *ngIf="errorMessage" class="login-alert" role="alert">
+            {{ errorMessage }}
+          </p>
 
           <div class="login-form__meta">
-            <p class="login-form__hint">For registered delivery partners only.</p>
-            <button type="button" class="login-form__link" (click)="goToForgotPassword()">Forgot password?</button>
+            <p class="login-form__support">Need help with access?</p>
+            <button type="button" class="login-form__link" (click)="goToForgotPassword()">Reset password</button>
           </div>
 
-          <ion-button
-            class="login-form__submit"
-            type="submit"
-            expand="block"
-            [disabled]="!canSubmit"
-          >
-            <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
-            {{ loading ? 'Signing in...' : 'Log In' }}
-          </ion-button>
+          <div class="login-form__action-block">
+            <button type="submit" class="login-form__submit" [disabled]="!canSubmit" [attr.aria-busy]="loading">
+              <span class="login-form__submit-glow" aria-hidden="true"></span>
+              <ion-spinner *ngIf="loading" class="login-form__spinner" name="crescent"></ion-spinner>
+              <span>{{ loading ? 'Signing in securely...' : 'Sign in securely' }}</span>
+            </button>
+
+            <p class="login-form__footer-note">Protected access for delivery staff and daily route operations.</p>
+          </div>
         </form>
       </section>
     </main>

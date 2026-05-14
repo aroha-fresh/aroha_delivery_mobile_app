@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+.surface-card {
+  padding: 18px;
+  border: 1px solid rgba(20, 38, 33, 0.08);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: var(--app-shadow-card, 0 12px 28px rgba(14, 32, 26, 0.07));
+}
+
+.surface-card--compact {
+  padding: 14px;
+}
+
+.surface-card[data-tone='muted'] {
+  background: rgba(248, 251, 249, 0.98);
+}
+
+.surface-card[data-tone='success'] {
+  border-color: rgba(var(--app-color-primary-rgb), 0.16);
+  background: linear-gradient(180deg, #ffffff, #f8fcfa);
+}
+
+.surface-card[data-tone='warning'] {
+  border-color: rgba(var(--app-color-tertiary-rgb), 0.22);
+  background: linear-gradient(180deg, #ffffff, #fff9ee);
+}
+
+.surface-card[data-tone='danger'] {
+  border-color: rgba(231, 111, 81, 0.2);
+  background: linear-gradient(180deg, #ffffff, #fff8f6);
+}
+
+@media (max-width: 360px) {
+  .surface-card { padding: 14px; border-radius: 20px; }
+  .surface-card--compact { padding: 11px; }
+}

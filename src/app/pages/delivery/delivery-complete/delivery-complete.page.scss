@@ -1,7 +1,23 @@
-ion-content{--background:var(--app-color-secondary);--color:var(--app-color-text);font-family:"SF Pro Text","Avenir Next","Segoe UI",sans-serif}
-.delivery-complete-page{min-height:100%;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 132px);background:linear-gradient(180deg,#f7fbf9,#edf4f0)}
-.delivery-complete-shell,.action-selector,.proof-stack,.completion-bar,.confirmation-summary{display:flex;flex-direction:column}
-.delivery-complete-shell{gap:14px;max-width:440px;margin:0 auto}
+ion-content{--background:var(--app-color-secondary);--color:var(--app-color-text);font-family:var(--app-font-family)}
+
+/* Photo proof */
+.proof-section{margin-bottom:.75rem}
+.photo-btn{width:100%;min-height:3.2rem;display:flex;align-items:center;justify-content:center;gap:.6rem;border:1.5px dashed rgba(var(--app-color-primary-rgb),.28);border-radius:1.2rem;background:rgba(var(--app-color-primary-rgb),.04);color:var(--app-color-primary);font:inherit;font-weight:700;font-size:.92rem;cursor:pointer}
+.photo-btn ion-icon{font-size:1.3rem}
+.photo-preview{position:relative;border-radius:1.2rem;overflow:hidden;aspect-ratio:4/3;background:#000}
+.photo-preview__img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-preview__overlay{position:absolute;bottom:0;left:0;right:0;padding:.6rem .8rem;background:linear-gradient(to top,rgba(0,0,0,.6),transparent);display:flex;align-items:center;gap:.4rem}
+.photo-preview__uploading,.photo-preview__done,.photo-preview__pending{display:flex;align-items:center;gap:.35rem;color:#fff;font-size:.78rem;font-weight:600}
+.photo-preview__uploading ion-spinner{width:1rem;height:1rem;--color:#fff}
+.photo-preview__done{color:#7be3af}
+.photo-preview__pending{color:rgba(255,255,255,.7)}
+.photo-preview__remove{position:absolute;top:.6rem;right:.6rem;width:2.2rem;height:2.2rem;border-radius:.7rem;border:0;background:rgba(0,0,0,.5);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:1rem}
+
+/* Note toggle */
+.note-toggle-row{margin-top:.5rem}
+.note-toggle-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.44rem .9rem;border-radius:999px;border:1px solid rgba(var(--app-color-primary-rgb),.15);background:rgba(var(--app-color-primary-rgb),.04);color:var(--app-color-primary);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+.note-toggle-btn ion-icon{font-size:.92rem}
+.action-selector,.proof-stack,.confirmation-summary{display:flex;flex-direction:column}
 .complete-header,.context-band,.proof-toggle,.confirmation-row,.proof-panel--placeholder{display:flex;align-items:center}
 .complete-header{gap:10px}
 .complete-header__back{display:grid;width:42px;height:42px;place-items:center;border:1px solid rgba(20,38,33,.08);border-radius:14px;background:rgba(255,255,255,.92)}
@@ -10,7 +26,6 @@ ion-content{--background:var(--app-color-secondary);--color:var(--app-color-text
 .complete-header__eyebrow{margin:0 0 4px;font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .complete-header h1,.context-band__copy strong,.action-option strong,.proof-toggle__copy strong,.confirmation-row strong{margin:0}
 .complete-header h1{font-size:1.42rem}
-.surface-card{padding:16px;border:1px solid rgba(20,38,33,.08);border-radius:24px;background:rgba(255,255,255,.94)}
 .surface-card--context,.surface-card--action,.action-option--active,.proof-toggle--active{border-color:rgba(var(--app-color-primary-rgb),.18)}
 .context-band{justify-content:space-between;gap:12px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid rgba(20,38,33,.08)}
 .context-band__copy span,.proof-toggle__copy span,.proof-panel p{display:block;margin-top:4px;font-size:.82rem}
@@ -31,6 +46,15 @@ ion-content{--background:var(--app-color-secondary);--color:var(--app-color-text
 .reason-chip--active{background:var(--app-color-primary);border-color:var(--app-color-primary);color:#fff}
 .confirmation-row{justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid rgba(20,38,33,.08)}
 .confirmation-row:first-child{padding-top:0;border-top:0}
-.completion-bar{position:fixed;right:0;bottom:0;left:0;z-index:20;gap:10px;padding:14px 16px calc(env(safe-area-inset-bottom) + 14px);background:rgba(250,252,251,.96)}
 .completion-bar__ghost{min-height:44px;border-radius:14px;font-weight:700}
-.completion-bar__primary{--border-radius:16px;--padding-top:15px;--padding-bottom:15px;font-weight:800}
+.completion-bar__primary{--border-radius:16px;--padding-top:15px;--padding-bottom:15px;font-weight:800;flex:1}
+
+/* Compact layout for small phones */
+@media (max-width: 360px) {
+  .action-selector { gap: 7px; }
+  .action-option { padding: 11px; border-radius: 15px; }
+  .reason-grid { grid-template-columns: 1fr; }
+  .reason-chip { min-height: 38px; font-size: .8rem; }
+  .proof-toggle-grid { grid-template-columns: 1fr; }
+  .completion-bar__ghost { min-height: 42px; font-size: .84rem; }
+}
