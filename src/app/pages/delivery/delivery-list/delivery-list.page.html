@@ -1,4 +1,8 @@
 <ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingText="Pull to refresh" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
   <app-page-shell>
     <app-top-header
       [eyebrow]="todayLabel"
@@ -44,7 +48,7 @@
             <strong>{{ pendingCount }}</strong>
           </article>
           <article class="summary-pill summary-pill--soft">
-            <span>Completed</span>
+            <span>Delivered</span>
             <strong>{{ completedCount }}</strong>
           </article>
           <article class="summary-pill summary-pill--muted">
@@ -145,8 +149,44 @@
           <div class="delivery-list-stack delivery-list-stack--completed">
             <app-delivery-card
               [stop]="stop"
-              *ngFor="let stop of resolvedStops"
-              [actionable]="false"
+              *ngFor="let stop of completedStops"
+              actionText="View Details"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
+            ></app-delivery-card>
+          </div>
+        </section>
+
+        <section *ngIf="cancelledStops.length" class="list-section list-section--cancelled">
+          <app-section-header
+            title="Cancelled"
+            [meta]="cancelledStops.length + ' stop(s)'"
+          ></app-section-header>
+
+          <div class="delivery-list-stack">
+            <app-delivery-card
+              [stop]="stop"
+              *ngFor="let stop of cancelledStops"
+              actionText="View Details"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
+            ></app-delivery-card>
+          </div>
+        </section>
+
+        <section *ngIf="skippedStops.length" class="list-section list-section--skipped">
+          <app-section-header
+            title="Skipped"
+            [meta]="skippedStops.length + ' stop(s)'"
+          ></app-section-header>
+
+          <div class="delivery-list-stack">
+            <app-delivery-card
+              [stop]="stop"
+              *ngFor="let stop of skippedStops"
+              actionText="View Details"
+              (cardPressed)="openDelivery(stop.id)"
+              (actionPressed)="openDelivery(stop.id)"
             ></app-delivery-card>
           </div>
         </section>
